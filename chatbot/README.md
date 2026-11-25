@@ -1,27 +1,46 @@
 # ICT University assistant (local)
 
-A terminal chatbot that answers questions about ICT University from the shared knowledge base in this repository.
-Everything runs on your own computer: the search index (PostgreSQL + pgvector in Docker), the embedding model
-(e5, through fastembed) and the language model (`qwen2.5:3b`, through Ollama). After the one-time setup it needs no
-network and no API key.
+A chatbot (terminal or browser) that answers questions about ICT University from the shared knowledge base in this
+repository. Everything runs on your own computer: the search index (PostgreSQL + pgvector in Docker), the embedding
+model (e5, through fastembed) and the language model (`qwen2.5:3b`, through Ollama). After the one-time setup it
+needs no network and no API key. This folder is personal: it is not contributed to the shared knowledge base.
 
 Setup, design decisions and measurements are in the project journal: [docs/joelfah/](../docs/joelfah/README.md).
 
-## Run
+## Quick start: two commands
 
-Prerequisites (done once, see [docs/joelfah/01-local-setup.md](../docs/joelfah/01-local-setup.md)): the `db`
-container running and indexed, `.env` with `EMBEDDING_PROVIDER=fastembed`, Ollama running with `qwen2.5:3b` pulled.
+You need, once: Python 3.11+, Docker Engine usable without sudo, and [Ollama](https://ollama.com) running.
+`setup.sh` checks all three and prints the exact fix if one is missing.
 
 ```bash
-cd <repository root>               # ictkb reads .env from the current directory
+./chatbot/setup.sh          # one time: venv, .env, database, index, models, self-test (first run: ~4 GB download)
+./chatbot/run.sh            # terminal chat
+./chatbot/run.sh --web      # or: browser page at http://127.0.0.1:8765 (local only)
+```
+
+`setup.sh` is safe to run again (it skips what's done and never overwrites an existing `.env`); add `--crawl` to
+also re-read the university website. Measured on the development laptop: a re-run takes about 15 s.
+
+### By hand (what the scripts do)
+
+```bash
 . .venv/bin/activate
+export FASTEMBED_CACHE_PATH=$HOME/.cache/fastembed    # otherwise fastembed stores the model in /tmp
 docker compose -f docker/docker-compose.yml up -d db
 python -m chatbot.chat             # interactive
 python -m chatbot.chat --debug "How do I register for courses?"   # one-off, with scores and timings
+python -m chatbot.web --port 8765  # web page
 ```
 
-Commands inside the chat: `/sources` (passages retrieved for the last question, with scores), `/debug` (toggle
-scores and timings), `/quit`.
+Commands inside the terminal chat: `/sources` (passages retrieved for the last question, with scores), `/debug`
+(toggle scores and timings), `/quit`.
+
+### The web page
+
+Same pipeline and safeguards as the terminal. The answer streams in as it's written; under it, "details" shows the
+confidence, the passages retrieved (and which were given to the model) and the timings. It listens on 127.0.0.1
+only, accepts only JSON requests from a localhost host name (so other websites open in your browser can't use it),
+and loads nothing from the internet. One question is answered at a time.
 
 ## How it answers
 
@@ -70,6 +89,7 @@ in [config.py](config.py):
 | `CHAT_MAX_ANSWER_TOKENS` | 400 | Hard cap on answer length |
 | `CHAT_SEED` | 42 | Fixed sampling seed: the same question gets (almost) the same answer |
 | `CHAT_KEEP_ALIVE` | `30m` | How long Ollama keeps the model in memory between questions |
+| `CHAT_WEB_PORT` | 8765 | Port of the web page (`--port` overrides it) |
 | `FASTEMBED_CACHE_PATH` | `~/.cache/fastembed` | Where the e5 model is stored (fastembed's own default is `/tmp`) |
 
 ## Files
@@ -82,6 +102,9 @@ in [config.py](config.py):
 | `llm.py` | Streaming client for Ollama's `/api/chat` (uses `httpx`, already a repo dependency) |
 | `chat.py` | Terminal loop and the answer pipeline |
 | `tests/` | Unit tests that need neither the database nor the model: `python -m pytest chatbot/tests` |
+| `setup.sh`, `run.sh` | One-time setup and start (terminal or `--web`) |
+| `env.template` | The local-only `.env` that `setup.sh` copies when there is none |
+| `web.py`, `web_page.html` | Local web page (standard library HTTP server, NDJSON streaming, no external resources) |
 | `eval_generation.py` | Runs golden questions through the whole pipeline and writes a report + CSV for hand verdicts: `python -m chatbot.eval_generation --label <name> [--live]` |
 | `BENCHMARKS.md` | Hardware, method, before/after results, decisions, weakest categories |
 | `reports/` | Evaluation reports, CSVs with verdicts, live logs, machine state per run |

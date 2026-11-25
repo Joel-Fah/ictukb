@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICT University Assistant</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --text: #1d2330; --muted: #5d6677; --border: #dde1e8;
+    --accent: #1f5fbf; --accent-text: #ffffff; --q-bg: #e8effb; --note: #8a5a00; --note-bg: #fff6e0;
+    --warn: #a32020; --warn-bg: #fdeaea; --code: #eef0f4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171c; --panel: #1c2027; --text: #e6e9ef; --muted: #9aa3b2; --border: #2d333d;
+      --accent: #6ea3ff; --accent-text: #0d1117; --q-bg: #1f2b40; --note: #f0c36a; --note-bg: #2d2617;
+      --warn: #ff8f8f; --warn-bg: #3a1d1d; --code: #262b34;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 780px; margin: 0 auto; padding: 24px 16px 140px; }
+  header h1 { font-size: 1.35rem; margin: 0 0 4px; }
+  header p { margin: 0; color: var(--muted); font-size: .92rem; }
+  .examples { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 8px; }
+  .examples button { border: 1px solid var(--border); background: var(--panel); color: var(--text);
+                     border-radius: 999px; padding: 6px 12px; font: inherit; font-size: .88rem; cursor: pointer; }
+  .examples button:hover { border-color: var(--accent); }
+  .turn { margin-top: 18px; }
+  .q { background: var(--q-bg); border-radius: 12px; padding: 10px 14px; font-weight: 600; }
+  .a { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px;
+       margin-top: 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .a .line { min-height: 1em; }
+  .a .head { font-weight: 600; margin-top: 4px; }
+  .a .src { color: var(--muted); font-size: .92rem; }
+  .a .note { color: var(--note); background: var(--note-bg); border-radius: 6px; padding: 2px 6px; margin: 2px 0; }
+  .a .warn { color: var(--warn); background: var(--warn-bg); border-radius: 6px; padding: 2px 6px; margin: 2px 0; }
+  .a a { color: var(--accent); }
+  .thinking { color: var(--muted); font-style: italic; }
+  details { margin-top: 6px; color: var(--muted); font-size: .85rem; }
+  details table { border-collapse: collapse; margin-top: 6px; width: 100%; }
+  details td { border-top: 1px solid var(--border); padding: 3px 6px 3px 0; vertical-align: top; }
+  code { background: var(--code); border-radius: 4px; padding: 0 4px; }
+  form { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg); border-top: 1px solid var(--border); }
+  .bar { max-width: 780px; margin: 0 auto; padding: 12px 16px; display: flex; gap: 8px; }
+  textarea { flex: 1; resize: none; height: 48px; border: 1px solid var(--border); border-radius: 10px;
+             padding: 12px; font: inherit; background: var(--panel); color: var(--text); }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  button.ask { border: 0; border-radius: 10px; padding: 0 18px; background: var(--accent); color: var(--accent-text);
+               font: inherit; font-weight: 600; cursor: pointer; }
+  button.ask:disabled { opacity: .5; cursor: default; }
+  .foot { color: var(--muted); font-size: .8rem; margin-top: 22px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>ICT University assistant</h1>
+    <p>Answers only from the ICT University knowledge base, with sources. Runs entirely on this computer.
+       English or French.</p>
+  </header>
+  <div class="examples" id="examples">
+    <button type="button">How do I register for courses?</button>
+    <button type="button">Can I pay my fees in installments?</button>
+    <button type="button">When are the exams?</button>
+    <button type="button">I forgot my ERP password. What do I do?</button>
+    <button type="button">Comment payer les frais de scolarité ?</button>
+    <button type="button">What is my current fee balance?</button>
+  </div>
+  <div id="log" aria-live="polite"></div>
+  <p class="foot" id="foot">Answers can be incomplete or wrong: check the cited source, or ask the office concerned.</p>
+</main>
+<form id="form">
+  <div class="bar">
+    <textarea id="q" maxlength="500" placeholder="Ask a question / Posez une question…" aria-label="Question"></textarea>
+    <button class="ask" id="ask" type="submit">Ask</button>
+  </div>
+</form>
+<script>
+"use strict";
+const log = document.getElementById("log"), q = document.getElementById("q"), ask = document.getElementById("ask");
+const URL_RE = /https?:\/\/[^\s\])>]+/g;
+
+// Render text safely: only text nodes and <a> for http(s) links; nothing from the server is parsed as HTML.
+function appendLinked(el, text) {
+  let last = 0;
+  for (const m of text.matchAll(URL_RE)) {
+    const url = m[0].replace(/[.,;:]+$/, "");
+    el.append(text.slice(last, m.index));
+    const a = document.createElement("a");
+    a.href = url; a.textContent = url; a.target = "_blank"; a.rel = "noopener noreferrer";
+    el.append(a);
+    last = m.index + url.length;
+  }
+  el.append(text.slice(last));
+}
+
+function lineClass(line) {
+  if (/^(Sources:|Sources given|Sources fournies)/.test(line)) return "head";
+  if (/^\s{2}\[/.test(line)) return "src";
+  if (/^(Warning|Attention)\b/.test(line) || line.includes("[contact removed") || line.includes("[coordonnée retirée")) return "warn";
+  if (/^(Note|Remarque)\b|^\[answer|^\[réponse/.test(line)) return "note";
+  return "";
+}
+
+function render(el, text) {
+  el.replaceChildren();
+  for (const line of text.split("\n")) {
+    const div = document.createElement("div");
+    div.className = "line " + lineClass(line);
+    appendLinked(div, line);
+    el.append(div);
+  }
+}
+
+function details(turn) {
+  const d = document.createElement("details");
+  const s = document.createElement("summary");
+  const timing = turn.used_llm ? `first words ${turn.first_token_s ?? "-"} s, total ${turn.total_s} s`
+                               : "answered without the model (below the threshold)";
+  s.textContent = `confidence ${turn.confidence} (best ${turn.best_similarity}, threshold ${turn.threshold}) · ${timing}`;
+  d.append(s);
+  const t = document.createElement("table");
+  for (const p of turn.passages) {
+    const tr = t.insertRow();
+    tr.insertCell().textContent = p.similarity;
+    const c = tr.insertCell(); const code = document.createElement("code"); code.textContent = p.id; c.append(code);
+    tr.insertCell().textContent = (p.heading || "") + (p.used ? "" : "  (not given to the model)");
+  }
+  d.append(t);
+  return d;
+}
+
+async function send(question) {
+  ask.disabled = true;
+  const turnEl = document.createElement("div"); turnEl.className = "turn";
+  const qEl = document.createElement("div"); qEl.className = "q"; qEl.textContent = question;
+  const aEl = document.createElement("div"); aEl.className = "a";
+  const wait = document.createElement("span"); wait.className = "thinking";
+  wait.textContent = "Searching the knowledge base, then writing (about 15-40 s on this computer)…";
+  aEl.append(wait);
+  turnEl.append(qEl, aEl); log.append(turnEl); turnEl.scrollIntoView({behavior: "smooth", block: "end"});
+  let text = "";
+  try {
+    const res = await fetch("/api/ask", {method: "POST", headers: {"Content-Type": "application/json"},
+                                         body: JSON.stringify({question})});
+    if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error || res.statusText); }
+    const reader = res.body.getReader(), dec = new TextDecoder();
+    let buf = "";
+    for (;;) {
+      const {value, done} = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, {stream: true});
+      let nl;
+      while ((nl = buf.indexOf("\n")) >= 0) {
+        const line = buf.slice(0, nl); buf = buf.slice(nl + 1);
+        if (!line) continue;
+        const ev = JSON.parse(line);
+        if (ev.t === "text") { text += ev.v; render(aEl, text.replace(/\s+$/, "")); }
+        else if (ev.t === "done") { turnEl.append(details(ev.turn)); }
+        else if (ev.t === "error") { throw new Error(ev.v); }
+      }
+      window.scrollTo({top: document.body.scrollHeight});
+    }
+  } catch (err) {
+    const e = document.createElement("div"); e.className = "line warn"; e.textContent = "Error: " + err.message;
+    if (!text) aEl.replaceChildren(); aEl.append(e);
+  } finally {
+    ask.disabled = false; q.focus();
+  }
+}
+
+document.getElementById("form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const question = q.value.trim();
+  if (question && !ask.disabled) { q.value = ""; send(question); }
+});
+q.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); document.getElementById("form").requestSubmit(); }
+});
+document.getElementById("examples").addEventListener("click", (e) => {
+  if (e.target.tagName === "BUTTON" && !ask.disabled) send(e.target.textContent);
+});
+fetch("/api/info").then(r => r.json()).then(i => {
+  document.getElementById("foot").textContent +=
+    ` Model ${i.model}, ${i.top_k} passages per question, similarity threshold ${i.threshold}.`;
+}).catch(() => {});
+</script>
+</body>
+</html>

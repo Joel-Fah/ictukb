@@ -26,6 +26,7 @@ These constraints shaped every choice below.
 | 2. Chatbot | Built `chatbot/`; tested 12 questions over 4 rounds, checking every answer against its sources | Grounded, cited answers in English and French; refusals work; invented contact details removed by code |
 | 3. Measure and tune | 5 runs of 20 golden questions, every answer checked by hand; model, passages, seed | Final: 8 correct / 4 partial / 1 wrong / 2 refused of 15; 4/5 unanswerable refused; 3B kept, top-k 4 kept; finance and multi-hop weakest |
 | 4. Contribute | Sent 6 issues + 2 docs PRs; prepared 9 more issues covering all 35 uncovered golden questions, content-writing patterns, French questions, multi-hop failures | [04-contributions.md](04-contributions.md) |
+| 5. Package | `setup.sh` + `run.sh` (two commands), a local web page with streaming answers | Re-run of setup in 15 s; web page answers with the same safeguards; 29 unit tests |
 
 ## 3. Main challenges
 
