@@ -4,7 +4,7 @@
 on the repo's golden questions instead of on questions we picked ourselves.
 
 **Result in short:** the final configuration (`qwen2.5:3b`, 4 passages, seed 42) answers 8 of 15 answerable golden
-questions fully correctly and 4 partially, gets 1 wrong, and refuses 2 (one rightly, as the document doesn't exist).
+questions fully correctly and 4 partially, gets 1 wrong, and refuses 2 (one rightly: the finance-office directory is generated from a Google Sheet that isn't configured yet).
 4 of 5 unanswerable questions are refused; no invented contact detail reached the student. Finance and multi-hop
 questions are the weakest. A smaller model invented more; fewer passages lost needed information. The biggest lesson
 was about measurement itself: **one run of 20 questions is noisy**.

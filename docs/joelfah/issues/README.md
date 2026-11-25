@@ -16,8 +16,26 @@ gh issue create -R Egbemichel/ictukb --title "$(head -1 "$f" | sed 's/^# //')" -
 | 05 | [05-compose-db-port-exposed.md](05-compose-db-port-exposed.md) | `docker/` | Yes | posted: [#5](https://github.com/Egbemichel/ictukb/issues/5) |
 | 06 | [06-docs-still-say-cohere.md](06-docs-still-say-cohere.md) | `docs/` | No (docs) | posted: [#6](https://github.com/Egbemichel/ictukb/issues/6) |
 
-Content issues (missing information per category, retrieval failures PRG-05, TTB-04, PPL-05, PPL-06, MHP-01 to 03)
-come after the local evaluation, so they carry fresh evidence.
+### Phase 4: knowledge-base content and evaluation (drafts, not posted)
+
+| # | File | Area | Template | Covers | Status |
+|---|---|---|---|---|---|
+| 07 | [07-sheets-not-configured.md](07-sheets-not-configured.md) | `sources/sheets.yml` (infra) | none | 14 uncovered golden questions waiting for 8 unconfigured Google Sheets | draft |
+| 08 | [08-missing-campus.md](08-missing-campus.md) | content: campus | missing-info | CMP-02, CMP-07, CMP-08 | draft |
+| 09 | [09-missing-canteen.md](09-missing-canteen.md) | content: canteen | missing-info | CAN-02, CAN-04, VAR-05 (+ heading note) | draft |
+| 10 | [10-missing-transport.md](10-missing-transport.md) | content: transport | missing-info | TRN-01, TRN-03 | draft |
+| 11 | [11-missing-student-life.md](11-missing-student-life.md) | content: student life | missing-info | STL-02, STL-03, STL-04, STL-06 | draft |
+| 12 | [12-missing-programs.md](12-missing-programs.md) | content: programs, admissions, procedures, finance, erp, people | missing-info | ADM-04, ADM-08, PRG-03, PRG-07, PRG-08, PRC-11, FIN-09, ERP-08, PPL-03 | draft |
+| 13 | [13-content-structure-findings.md](13-content-structure-findings.md) | content (all) + CONTRIBUTING | none | 4 writing patterns behind wrong answers, with evidence | draft |
+| 14 | [14-french-golden-questions.md](14-french-golden-questions.md) | `eval/` (infra) | none | 26 French golden questions; French hit@5 20/26 vs English 26/26 | draft |
+| 15 | [15-multi-hop-retrieval.md](15-multi-hop-retrieval.md) | `src/` (infra) + content + `eval/` | none | MHP-01 (one document fills the top 5), MHP-02 (expected document lacks the answer) | draft |
+
+Together, 07-12 cover all 35 "Not yet covered" golden questions of `docs/evaluation-latest.md` (MHP-04 and VAR-03
+via 07). They were generated from the repo's own files by
+[../scripts/coverage_gaps.py](../scripts/coverage_gaps.py); they add no facts about the university.
+
+The templates' labels (`missing-info`) can only be set by the maintainers, so each body follows the template's
+fields instead.
 
 ## Pull requests
 

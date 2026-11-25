@@ -25,7 +25,7 @@ These constraints shaped every choice below.
 | 1. Local knowledge base | Docker, local e5 embeddings, indexed 77 documents + crawled 33 website pages (733 chunks) | Right document in the top 5 for 94% of golden questions; no network traffic; threshold recalibrated |
 | 2. Chatbot | Built `chatbot/`; tested 12 questions over 4 rounds, checking every answer against its sources | Grounded, cited answers in English and French; refusals work; invented contact details removed by code |
 | 3. Measure and tune | 5 runs of 20 golden questions, every answer checked by hand; model, passages, seed | Final: 8 correct / 4 partial / 1 wrong / 2 refused of 15; 4/5 unanswerable refused; 3B kept, top-k 4 kept; finance and multi-hop weakest |
-| Upstream | 6 issues and 2 docs PRs to the shared knowledge base | [issues/](issues/README.md) |
+| 4. Contribute | Sent 6 issues + 2 docs PRs; prepared 9 more issues covering all 35 uncovered golden questions, content-writing patterns, French questions, multi-hop failures | [04-contributions.md](04-contributions.md) |
 
 ## 3. Main challenges
 
