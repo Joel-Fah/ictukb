@@ -105,6 +105,20 @@ fixed and re-rendered. Live check against the real models: the new events work, 
 a refusal in which the redactor had removed an invented address. That case led to one more fix: a refusal now also
 lists the removed contact among its reasons.
 
+### Second review
+
+| Feedback | Change |
+|---|---|
+| Sending while an answer is written interrupts it | Enter submitted the form, and while busy "submit" meant Stop. The text field is now **locked while an answer is written**; only the Stop button or **Esc** stops |
+| Two tabs: the second waits for the first | Kept on purpose (one shared CPU, model and database connection; answering both at once would make each about twice as slow on this laptop), but now **visible**: the server sends a `queued` event and the second tab shows "Waiting: another question is being answered (maybe in another tab)…" |
+| Sources and details should collapse | Sources, performance and passages sit in one **accordion** with a one-line summary ("2 sources · match 0.82 · 41 s"), closed by default. *Worth checking* and contacts stay visible: they're safety information |
+| Smooth open/close | The native `<details>` can't animate its height in most browsers, so the accordion is a button plus a CSS grid row animating from `0fr` to `1fr` (and opacity); closed content is `inert` (skipped by Tab and screen readers); reduced-motion users get no animation |
+| No scrollbar in the text field | Hidden scrollbar; the field still scrolls with the wheel and keys past ~8 lines |
+| Icon and copy button | Remix Icon `robot-3-line` (top bar, answers, browser tab) and `file-copy-line` + "Copy" (Apache 2.0, credited in the file) |
+| Citations as superscripts | Citations are footnote numbers (`<sup>`), numbered by first appearance **while streaming**, the same order as the final source list, so numbers don't change when the answer completes; repeated citations collapse into one; clicking a number opens the sources and highlights the card |
+
+![Accordion open and closed, footnotes, a queued question with the locked composer](images/web-queued-busy.png)
+
 ## Trade-offs
 
 | Choice | Gained | Gave up |

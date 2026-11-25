@@ -3,6 +3,7 @@
 import http.client
 import json
 import threading
+import time
 from http.server import ThreadingHTTPServer
 
 import pytest
@@ -56,7 +57,7 @@ def request(port, method, path, body=None, headers=None):
 def test_page_and_info(server):
     status, html = request(server, "GET", "/")
     assert status == 200 and "<title>ICT University Assistant</title>" in html
-    assert "<link" not in html and "src=\"http" not in html  # nothing loaded from the internet
+    assert 'href="http' not in html and 'src="http' not in html  # nothing loaded from the internet
     status, info = request(server, "GET", "/api/info")
     assert status == 200 and json.loads(info)["model"] == "fake"
 
@@ -89,6 +90,35 @@ def test_behaviour_states():
     # Seen live: a refusal that also invented an address; the removal must still be reported.
     status, reasons = behaviour(make_turn(answer="I do not have that information.", redacted=["finance@x.cm"]))
     assert status == "not_found" and any("removed" in r for r in reasons)
+
+
+def test_second_question_is_told_it_is_queued():
+    release = threading.Event()
+
+    class SlowAssistant(FakeAssistant):
+        def answer(self, question, out, **kw):
+            if question == "first":
+                release.wait(5)
+            return super().answer(question, out, **kw)
+
+    srv = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(SlowAssistant(), {}))
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    port = srv.server_address[1]
+    body = lambda q: json.dumps({"question": q})  # noqa: E731
+    hdr = {"Content-Type": "application/json"}
+    first = threading.Thread(target=request, args=(port, "POST", "/api/ask", body("first"), hdr))
+    first.start()
+    time.sleep(0.3)  # let the first question take the lock
+    conn = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+    conn.request("POST", "/api/ask", body=body("second"), headers=hdr)
+    res = conn.getresponse()
+    assert json.loads(res.readline())["t"] == "queued"
+    release.set()
+    events = [json.loads(line) for line in res.read().decode().splitlines()]
+    assert events[-1]["t"] == "done"
+    first.join(5)
+    srv.shutdown()
+    srv.server_close()
 
 
 @pytest.mark.parametrize("body,headers,expected", [

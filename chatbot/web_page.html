@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ICT University Assistant</title>
+<!-- Icons: Remix Icon (robot-3-line, file-copy-line), Apache License 2.0, https://remixicon.com -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232457d6'%3E%3Cpath d='M11 1V2H7C5.34 2 4 3.34 4 5V8C4 10.76 6.24 13 9 13H15C17.76 13 20 10.76 20 8V5C20 3.34 18.66 2 17 2H13V1H11ZM6 5C6 4.45 6.45 4 7 4H17C17.55 4 18 4.45 18 5V8C18 9.66 16.66 11 15 11H9C7.34 11 6 9.66 6 8V5ZM9.5 9C10.33 9 11 8.33 11 7.5C11 6.67 10.33 6 9.5 6C8.67 6 8 6.67 8 7.5C8 8.33 8.67 9 9.5 9ZM14.5 9C15.33 9 16 8.33 16 7.5C16 6.67 15.33 6 14.5 6C13.67 6 13 6.67 13 7.5C13 8.33 13.67 9 14.5 9ZM6 22C6 18.69 8.69 16 12 16C15.31 16 18 18.69 18 22H20C20 17.58 16.42 14 12 14C7.58 14 4 17.58 4 22H6Z'/%3E%3C/svg%3E">
 <style>
   :root {
     --bg: #f7f8fa; --surface: #ffffff; --surface-2: #f1f3f6; --text: #1b2230; --muted: #667085; --faint: #98a2b3;
@@ -37,7 +39,9 @@
          backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
   .top-in { max-width: 820px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
   .mark { width: 30px; height: 30px; border-radius: 9px; background: var(--accent); color: var(--accent-text);
-          display: grid; place-items: center; font-weight: 700; font-size: 12px; letter-spacing: .5px; }
+          display: grid; place-items: center; flex: none; }
+  .mark svg { width: 18px; height: 18px; }
+  .icon-btn svg { width: 14px; height: 14px; }
   .brand { font-weight: 650; }
   .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted);
           border: 1px solid var(--border); border-radius: 999px; padding: 2px 9px; background: var(--surface); }
@@ -70,7 +74,7 @@
   .user .meta { margin-top: 4px; }
 
   .bot { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; }
-  .bot .mark { width: 30px; height: 30px; font-size: 11px; }
+  .bot .mark { width: 30px; height: 30px; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
           overflow: hidden; }
   .card-head { display: flex; align-items: center; gap: 8px; padding: 9px 14px 0; flex-wrap: wrap; }
@@ -91,9 +95,11 @@
   .answer p:last-child, .answer ul:last-child, .answer ol:last-child { margin-bottom: 0; }
   .answer ul, .answer ol { margin: 0 0 10px; padding-left: 22px; }
   .answer li { margin: 3px 0; }
-  .cite { display: inline-block; font: 600 11px/1 var(--mono); color: var(--accent); background: var(--accent-soft);
-          border-radius: 6px; padding: 3px 5px; margin: 0 2px; vertical-align: 1px; text-decoration: none; }
-  .cite:hover { text-decoration: none; filter: brightness(.95); }
+  /* Citations as footnote numbers */
+  sup.fn { font-size: .7em; line-height: 0; vertical-align: super; margin-left: 1px; }
+  sup.fn + sup.fn::before { content: ","; color: var(--faint); margin-right: 1px; }
+  .cite { color: var(--accent); font-weight: 650; text-decoration: none; padding: 0 1px; border-radius: 3px; }
+  .cite:hover { background: var(--accent-soft); text-decoration: none; }
   .removed { font-size: 12px; color: var(--err); background: var(--err-soft); border-radius: 6px; padding: 1px 6px; }
   .caret { display: inline-block; width: 7px; height: 1.05em; background: var(--accent); vertical-align: -2px;
            margin-left: 2px; animation: pulse .9s infinite; border-radius: 1px; }
@@ -137,12 +143,20 @@
   .m-warn { border-color: color-mix(in srgb, var(--warn) 45%, var(--border)); }
   .m-warn b { color: var(--warn); }
   .m-none b { color: var(--none); }
-  details summary { cursor: pointer; font-size: 12px; color: var(--muted); list-style: none; display: inline-flex;
-                    align-items: center; gap: 4px; }
-  details summary::-webkit-details-marker { display: none; }
-  details summary::before { content: "›"; display: inline-block; transition: transform .15s; }
-  details[open] summary::before { transform: rotate(90deg); }
-  .passages { margin-top: 8px; display: grid; gap: 5px; }
+  /* Accordion: a button + a grid row that animates from 0fr to 1fr (smooth height without measuring) */
+  .acc-toggle { width: 100%; display: flex; align-items: center; gap: 8px; border: 0; background: transparent;
+                padding: 2px 0; cursor: pointer; font-size: 12.5px; color: var(--muted); text-align: left; }
+  .acc-toggle:hover { color: var(--text); }
+  .acc-toggle .chev { width: 16px; height: 16px; transition: transform .25s ease; flex: none; }
+  .acc-toggle[aria-expanded="true"] .chev { transform: rotate(90deg); }
+  .acc-toggle .sum { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+  .acc-toggle .sep { color: var(--faint); }
+  .acc { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .28s ease, opacity .22s ease; }
+  .acc.open { grid-template-rows: 1fr; opacity: 1; }
+  .acc-in { overflow: hidden; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+  .acc.open .acc-in { padding-top: 10px; }
+  .acc-in { transition: padding-top .28s ease; }
+  .passages { display: grid; gap: 5px; }
   .pas { display: grid; grid-template-columns: 52px 90px minmax(0, 1fr); gap: 8px; align-items: center; font-size: 12px; }
   .pas .v { font-family: var(--mono); }
   .bar { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
@@ -163,6 +177,10 @@
              font: inherit; line-height: 24px; padding: 6px 0; max-height: 200px; overflow-y: hidden; min-height: 36px; }
   textarea::placeholder { color: var(--faint); }
   textarea:focus-visible { outline: none; }  /* the surrounding box shows focus */
+  textarea { scrollbar-width: none; }        /* still scrolls (wheel, keys) past ~8 lines, without a visible bar */
+  textarea::-webkit-scrollbar { display: none; }
+  textarea:disabled { cursor: not-allowed; }
+  .box.busy { background: var(--surface-2); }
   .send { width: 36px; height: 36px; border-radius: 12px; border: 0; background: var(--accent); color: var(--accent-text);
           display: grid; place-items: center; cursor: pointer; flex: none; transition: opacity .15s, transform .1s; }
   .send:active { transform: scale(.96); }
@@ -186,7 +204,7 @@
 <body>
 <div class="top">
   <div class="top-in">
-    <div class="mark" aria-hidden="true">IU</div>
+    <div class="mark" id="top-mark" aria-hidden="true"></div>
     <div class="brand">ICT University Assistant</div>
     <span class="pill" id="model"><span class="dot"></span>Local</span>
     <span class="spacer"></span>
@@ -238,6 +256,12 @@ const log = $("log"), scroller = $("scroller"), q = $("q"), send = $("send"), fo
 const MAX = 500;
 const ICON_SEND = send.innerHTML;
 const ICON_STOP = '<svg width="14" height="14" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2.5" fill="currentColor"/></svg>';
+// Remix Icon (Apache 2.0): robot-3-line, file-copy-line, arrow-right-s-line
+const ROBOT = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 1V2H7C5.34315 2 4 3.34315 4 5V8C4 10.7614 6.23858 13 9 13H15C17.7614 13 20 10.7614 20 8V5C20 3.34315 18.6569 2 17 2H13V1H11ZM6 5C6 4.44772 6.44772 4 7 4H17C17.5523 4 18 4.44772 18 5V8C18 9.65685 16.6569 11 15 11H9C7.34315 11 6 9.65685 6 8V5ZM9.5 9C10.3284 9 11 8.32843 11 7.5C11 6.67157 10.3284 6 9.5 6C8.67157 6 8 6.67157 8 7.5C8 8.32843 8.67157 9 9.5 9ZM14.5 9C15.3284 9 16 8.32843 16 7.5C16 6.67157 15.3284 6 14.5 6C13.6716 6 13 6.67157 13 7.5C13 8.32843 13.6716 9 14.5 9ZM6 22C6 18.6863 8.68629 16 12 16C15.3137 16 18 18.6863 18 22H20C20 17.5817 16.4183 14 12 14C7.58172 14 4 17.5817 4 22H6Z"/></svg>';
+const COPY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z"/></svg>';
+const CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.1717 12.0007L8.22192 7.05093L9.63614 5.63672L16.0001 12.0007L9.63614 18.3646L8.22192 16.9504L13.1717 12.0007Z"/></svg>';
+const PLACEHOLDER = q.placeholder;
+$("top-mark").innerHTML = ROBOT;
 const STATUS = {
   grounded: "Grounded in sources", check: "Check this answer", not_found: "Not in the knowledge base",
   stopped: "Stopped", error: "Error", live: "Answering",
@@ -271,11 +295,12 @@ q.addEventListener("input", updateComposer);
 q.addEventListener("focus", resize);
 window.addEventListener("resize", resize);  // wrapping (and so the height) changes with the width
 q.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); form.requestSubmit(); }
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!busy) form.requestSubmit(); }
 });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && busy) busy.controller.abort(); });
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  if (busy) { busy.controller.abort(); return; }
+  if (busy) { if (e.submitter === send) busy.controller.abort(); return; }  // only the Stop button stops
   const question = q.value.trim();
   if (!question) return;
   q.value = ""; updateComposer();
@@ -285,8 +310,14 @@ function setBusy(b) {
   busy = b;
   send.innerHTML = b ? ICON_STOP : ICON_SEND;
   send.classList.toggle("stop", !!b);
-  send.setAttribute("aria-label", b ? "Stop" : "Send");
+  send.setAttribute("aria-label", b ? "Stop (Esc)" : "Send");
+  send.title = b ? "Stop (Esc)" : "";
   send.disabled = b ? false : !q.value.trim();
+  // One question at a time: the field is locked while an answer is written, so Enter can't interrupt it.
+  q.disabled = !!b;
+  q.placeholder = b ? "Writing the answer… (Esc or ■ to stop)" : PLACEHOLDER;
+  form.classList.toggle("busy", !!b);
+  if (!b) q.focus();
 }
 
 /* ---------- scrolling ---------- */
@@ -331,22 +362,33 @@ function inline(parent, text, refs) {
       REMOVED.lastIndex = 0; parent.append(el("span", "removed", tok.slice(1, -1)));
     } else {
       const id = tok.slice(1, -1);
-      if (prevCite === id) { last = m.index + tok.length; continue; }   // "[a] [a] [a]" → one chip
+      if (prevCite === id) {                                           // "[a] [a] [a]" → one footnote
+        const t = parent.lastChild;
+        if (t && t.nodeType === Node.TEXT_NODE) t.textContent = t.textContent.replace(/\s+$/, "");
+        last = m.index + tok.length; continue;
+      }
       prevCite = id;
-      const n = refs ? refs.indexOf(id) + 1 : 0;
-      const chip = el("a", "cite", n ? String(n) : id);
-      chip.title = id;
-      chip.href = "#";
-      chip.dataset.id = id;
-      parent.append(chip);
+      // Footnote number = order of first citation. The final source list uses the same order, so numbers shown
+      // while streaming stay the same when the sources arrive; ids not in the final list keep no number.
+      if (!refs.includes(id) && !refs.final) refs.push(id);
+      const n = refs.indexOf(id) + 1;
+      if (!n) { last = m.index + tok.length; continue; }
+      if (/\s$/.test(parent.lastChild?.textContent || "")) {           // "word [id]" → "word¹"
+        parent.lastChild.textContent = parent.lastChild.textContent.replace(/\s+$/, "");
+      }
+      const sup = el("sup", "fn"), a = el("a", "cite", String(n));
+      a.href = "#"; a.title = id; a.dataset.id = id;
+      sup.append(a); parent.append(sup);
     }
     last = m.index + tok.length;
   }
   parent.append(text.slice(last));
 }
 
-function renderAnswer(box, text, refs, live) {
+function renderAnswer(box, text, sources, live) {
   box.replaceChildren();
+  // While streaming, number citations as they appear; once done, number them by the final source list.
+  const refs = sources ? Object.assign([...sources], {final: true}) : [];
   const blocks = text.replace(/\r/g, "").trim().split(/\n\s*\n/);
   const kind = (l) => (/^\s*[-*•]\s+/.test(l) ? "ul" : /^\s*\d+[.)]\s+/.test(l) ? "ol" : "p");
   for (const block of blocks) {
@@ -375,7 +417,7 @@ function userMessage(text) {
 
 function botMessage() {
   const wrap = el("div", "msg bot");
-  const mark = el("div", "mark", "IU"); mark.setAttribute("aria-hidden", "true");
+  const mark = el("div", "mark"); mark.innerHTML = ROBOT;
   const card = el("div", "card");
   const head = el("div", "card-head");
   const badge = el("span", "badge b-live", STATUS.live);
@@ -414,6 +456,26 @@ function panel(m, turn) {
     p.append(c);
   }
   if (turn.contacts) p.append(el("div", "callout c-contacts", turn.contacts));
+
+  // Everything below is reference material: collapsed by default, one summary line, smooth open/close.
+  const x = turn.metrics;
+  const toggle = el("button", "acc-toggle"); toggle.type = "button"; toggle.setAttribute("aria-expanded", "false");
+  const sum = el("span", "sum");
+  const bits = [turn.sources.length ? `${turn.sources.length} source${turn.sources.length > 1 ? "s" : ""}` : "no sources",
+                `match ${x.best_similarity.toFixed(2)}`, turn.used_llm ? `${x.total_s} s` : "model not called"];
+  bits.forEach((b, i) => { if (i) sum.append(el("span", "sep", "·")); sum.append(el("span", "", b)); });
+  toggle.innerHTML = CHEV; toggle.append(sum);
+  const acc = el("div", "acc"), inner = el("div", "acc-in");
+  inner.setAttribute("inert", "");  // closed content is skipped by Tab and screen readers
+  acc.append(inner);
+  toggle.addEventListener("click", () => {
+    const open = toggle.getAttribute("aria-expanded") !== "true";
+    toggle.setAttribute("aria-expanded", String(open));
+    acc.classList.toggle("open", open);
+    inner.toggleAttribute("inert", !open);
+  });
+  p.append(toggle, acc);
+
   if (turn.sources.length) {
     const box = el("div");
     box.append(el("div", "label", turn.sources.some((s) => s.cited) ? "Sources" : "Sources given to the model (not cited)"));
@@ -431,9 +493,9 @@ function panel(m, turn) {
       a.append(el("span", "n", String(i + 1)), body);
       list.append(a);
     });
-    box.append(list); p.append(box);
+    box.append(list); inner.append(box);
   }
-  const x = turn.metrics, metrics = el("div", "metrics");
+  const metrics = el("div", "metrics");
   const margin = x.best_similarity - x.threshold;
   metrics.append(metricChip("match", x.best_similarity.toFixed(2), margin >= 0.05 ? "ok" : margin >= 0 ? "warn" : "none"));
   metrics.append(metricChip("search", x.retrieval_ms + " ms"));
@@ -445,7 +507,8 @@ function panel(m, turn) {
   } else {
     metrics.append(metricChip("model", "not called", "none"));
   }
-  const det = el("details"); det.append(el("summary", "", `${turn.passages.length} passages retrieved`));
+  const pasBox = el("div");
+  pasBox.append(el("div", "label", `${turn.passages.length} passages retrieved`));
   const pas = el("div", "passages");
   for (const s of turn.passages) {
     const row = el("div", "pas" + (s.used ? "" : " unused"));
@@ -455,17 +518,21 @@ function panel(m, turn) {
     row.append(el("span", "v", s.similarity.toFixed(3)), bar, h);
     pas.append(row);
   }
-  det.append(pas);
-  const row = el("div"); row.append(metrics); p.append(row, det);
+  pasBox.append(pas);
+  const metBox = el("div"); metBox.append(el("div", "label", "Performance"), metrics);
+  inner.append(metBox, pasBox);
   m.card.append(p);
+  return toggle;
 }
 
 function copyButton(m, getText) {
-  const b = el("button", "icon-btn", "Copy"); b.type = "button";
+  const b = el("button", "icon-btn"); b.type = "button";
+  const label = el("span", "", "Copy");
+  b.innerHTML = COPY; b.append(label);
   b.addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText(getText()); b.textContent = "Copied"; }
-    catch { b.textContent = "Copy failed"; }
-    setTimeout(() => { b.textContent = "Copy"; }, 1500);
+    try { await navigator.clipboard.writeText(getText()); label.textContent = "Copied"; }
+    catch { label.textContent = "Copy failed"; }
+    setTimeout(() => { label.textContent = "Copy"; }, 1500);
   });
   m.actions.append(b);
 }
@@ -493,7 +560,9 @@ async function ask(question) {
         const line = buf.slice(0, nl); buf = buf.slice(nl + 1);
         if (!line) continue;
         const ev = JSON.parse(line);
-        if (ev.t === "retrieval") {
+        if (ev.t === "queued") {
+          m.label.textContent = "Waiting: another question is being answered (maybe in another tab)…";
+        } else if (ev.t === "retrieval") {
           m.label.textContent = ev.fallback
             ? "Nothing close enough in the knowledge base…"
             : `Found ${ev.passages} passages (best match ${ev.best.toFixed(2)}) · writing the answer…`;
@@ -514,12 +583,18 @@ async function ask(question) {
     const refs = turn.sources.map((s) => s.id);
     renderAnswer(m.answer, text, refs, false);
     setStatus(m, turn.status);
-    panel(m, turn);
+    const toggle = panel(m, turn);
     copyButton(m, () => text.trim());
     m.answer.querySelectorAll(".cite").forEach((c) => c.addEventListener("click", (e) => {
       e.preventDefault();
       const card = m.card.querySelector(`.src[data-id="${CSS.escape(c.dataset.id)}"]`);
-      if (card) { card.scrollIntoView({block: "nearest"}); card.classList.add("flash"); setTimeout(() => card.classList.remove("flash"), 1200); }
+      if (!card) return;
+      const wasClosed = toggle.getAttribute("aria-expanded") !== "true";
+      if (wasClosed) toggle.click();  // open the sources first, then point at the card once it has expanded
+      setTimeout(() => {
+        card.scrollIntoView({block: "nearest", behavior: "smooth"});
+        card.classList.add("flash"); setTimeout(() => card.classList.remove("flash"), 1200);
+      }, wasClosed ? 300 : 0);
     }));
   } catch (err) {
     m.stop(); m.progress.hidden = true;

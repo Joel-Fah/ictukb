@@ -7,6 +7,7 @@ uses the same pipeline as the terminal chat (chat.Assistant), so every safeguard
 contact redaction, number/date check, draft/stale notes.
 
 API: POST /api/ask with JSON {"question": "..."} returns newline-delimited JSON events:
+    {"t": "queued"}              another question is being answered first (one at a time: shared CPU, model, DB)
     {"t": "retrieval", ...}      passages found, best similarity, whether the model will be asked
     {"t": "text", "v": "..."}    a piece of the answer as it is written
     {"t": "done", "turn": {...}} status (grounded / check / not_found) with reasons, sources, contacts, metrics
@@ -165,7 +166,8 @@ def make_handler(assistant, info: dict):
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.send_header("Content-Length", str(len(data)))
                 self.send_header("Content-Security-Policy",
-                                 "default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'")
+                                 "default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; "
+                                 "img-src 'self' data:")  # data: for the inline SVG favicon
                 self.end_headers()
                 self.wfile.write(data)
             elif self.path == "/api/info":
@@ -195,11 +197,17 @@ def make_handler(assistant, info: dict):
             self.end_headers()  # HTTP/1.0: no length, the body ends when the connection closes, so it can stream
             writer = EventWriter(self.wfile)
             try:
-                with lock:
+                if not lock.acquire(blocking=False):
+                    # Another question (e.g. from another tab) is being answered: say so instead of hanging silently.
+                    writer.send({"t": "queued"})
+                    lock.acquire()
+                try:
                     # The footer (sources, notes, contacts) is not streamed as text: the page builds it from the
                     # structured "done" event instead.
                     turn = assistant.answer(question, out=writer, footer=io.StringIO(),
                                             on_retrieval=lambda t: writer.send(retrieval_event(t)))
+                finally:
+                    lock.release()
                 writer.send({"t": "done", "turn": turn_summary(turn)})
             except (BrokenPipeError, ConnectionResetError):
                 pass  # the page was closed mid-answer
