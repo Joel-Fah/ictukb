@@ -1,0 +1,146 @@
+Loading the embedding model and qwen2.5:3b …
+
+> What documents do I need for a Bachelor application?
+[retrieval 96 ms, confidence=high, best=0.902, threshold=0.81, language=en]
+  0.902  admissions-bachelor-requirements  [Which documents do I need for a Bachelor's application (new students)?]
+  0.863  admissions-bachelor-requirements  [What do Top-Up students (HND holders) need?]
+  0.843  admissions-masters-requirements  [What are the entry requirements for the Masters program?]
+  0.843  web-bachelors-degree-entry-requirements  [NEW STUDENTS]
+For a Bachelor application, you need the following documents:
+
+- Certified Copy of Birth Certificate [admissions-bachelor-requirements]
+- Certified Copy of GCE "O" Level Certificate [admissions-bachelor-requirements]
+- Certified Copy of GCE "A" Level Certificate [admissions-bachelor-requirements]
+- Certified Copy of Probatoire [admissions-bachelor-requirements]
+- Certified Copy of Baccalaureate [admissions-bachelor-requirements]
+- Authenticated Copy of GCE "O" Level Certificate [admissions-bachelor-requirements]
+- Authenticated Copy of GCE "A" Level Certificate [admissions-bachelor-requirements]
+- Authenticated Copy of Probatoire [admissions-bachelor-requirements]
+- Authenticated Copy of Baccalaureate [admissions-bachelor-requirements]
+
+[SEE OUR PROGRAMS](https://ictuniversity.org/bachelor-programs/) [APPLY NOW](https://studentportal.ictuniversity.edu.cm/portal-sign-up/) [admissions-bachelor-requirements] [admissions-bachelor-requirements] [admissions-bachelor-requirements] [admissions-bachelor-requirements] [admissions-bachelor-requirements] [admissions-bachelor-requirements] [admissions-bachelor-requirements]
+
+Sources:
+  [admissions-bachelor-requirements] Bachelor admission requirements and documents (https://ictuniversity.org/bachelors-degree-entry-requirements/, verified 2026-11-18)
+[first token 26.3 s, total 72.6 s, prompt 1023 tok at 39 tok/s, answer 261 tok at 5.6 tok/s]
+
+> Can I pay my fees in installments?
+[retrieval 204 ms, confidence=high, best=0.881, threshold=0.81, language=en]
+  0.881  finance-installments  [Can I pay my fees in installments?]
+  0.830  finance-late-payment  [What happens if I pay late or do not pay?]
+  0.840  finance-installments  [What happens if I do not pay?]
+  0.832  announcements-current-files  [Notice of 9 November 2026: resumption of fees control] STALE
+Yes, you can pay your fees in installments. The tuition is paid in three installments: the first installment is 50% of the tuition, the second 30%, and the third 20%. For a total tuition of XAF 365,000, this amounts to XAF 182,500, XAF 109,500, and XAF 73,000 respectively. [finance-installments]
+
+Sources:
+  [finance-installments] Paying tuition in installments (content/finance/finance-installments.md, verified 2026-11-18)
+[first token 32.7 s, total 51.0 s, prompt 1026 tok at 32 tok/s, answer 104 tok at 5.7 tok/s]
+
+> How do I get my transcript?
+[retrieval 165 ms, confidence=high, best=0.884, threshold=0.81, language=en]
+  0.871  procedures-transcript  [How do I get my transcript?]
+  0.884  procedures-transcript  [How do I request an official stamped transcript?]
+  0.865  procedures-transcript  [What do I need before I can get a transcript?]
+  0.820  admissions-transfer  [Can I transfer from another university?]
+To get your transcript, follow these steps:
+
+- [procedures-transcript] Use the Download/Print Transcript option on the Transcript page of the ERP to get an unofficial layout. This page shows all your approved results grouped by semester with the semester GPA and your CGPA; credits transferred from another university appear at the top.
+
+- [procedures-transcript] For an official stamped transcript, under Requests and Services choose a partial or full official transcript, select the turnaround time (standard or express, where offered), state the purpose, and submit. The Registrar's Office processes the request and you can track its status and reference number on the page. The fee, if any, is added to My Fees.
+
+- [procedures-transcript] Before you can get a transcript, you need to ensure you do not have any outstanding fees. The cost and processing time are not stated in the ERP manual.
+
+- [admissions-transfer] If you are a transfer student, you need to provide your academic transcripts authenticated by the issuing institution. Your file is sent to the Deans of the respective faculties, who evaluate the documents to decide which credits can be transferred based on your previous academic achievements. Approval is sent to the Admissions Office, which admits you into the program. For Top-Up students (HND holders), they also provide a certified copy of their HND diploma, and their files are checked by the Department of Transcript and Verification.
+
+Sources:
+  [procedures-transcript] Request for an official transcript (content/procedures/procedures-transcript.md, verified 2026-11-17)
+  [admissions-transfer] Transfer students and credit recognition (https://ictuniversity.org/bachelors-degree-entry-requirements/, verified 2026-11-18)
+[first token 21.0 s, total 68.3 s, prompt 748 tok at 36 tok/s, answer 288 tok at 6.1 tok/s]
+
+> Which Masters programs are offered?
+[retrieval 147 ms, confidence=high, best=0.856, threshold=0.81, language=en]
+  0.837  programs-masters  [How long does the Masters program take?]
+  0.838  web-masters-programs  [Explore Our graduate Programs : ISS ISN MIT Artificial Intelligence > ICT FACULTY MASTERS PROGRAMS]
+  0.831  web-masters-programs  [Explore Our graduate Programs : ISS ISN MIT Artificial Intelligence > BMS FACULTY MASTERS PROGRAMS]
+  0.856  web-masters-programs  []
+The Masters programs offered at ICT University include:
+- Artificial Intelligence
+- Applied ICT in Education
+- Applied ICT in Public Health
+- Information Systems Security
+- Information Technology
+- Information Systems and Networking
+
+[web-masters-programs]
+
+Sources:
+  [web-masters-programs] Masters Programs (https://ictuniversity.org/masters-programs/, verified 2026-11-25)
+[first token 16.1 s, total 23.7 s, prompt 651 tok at 41 tok/s, answer 49 tok at 6.5 tok/s]
+
+> Who do I contact if the ERP is not working?
+[retrieval 164 ms, confidence=high, best=0.876, threshold=0.81, language=en]
+  0.876  erp-support  [Who do I contact if the ERP is not working or my account has a problem?] STALE
+  0.830  erp-support  [Common problems and answers] STALE
+  0.861  erp-password-reset  [What if I no longer have access to that email?]
+  0.823  procedures-complaints  []
+If the ERP is not working, you should contact the Database Administrator or your office. [erp-support] Also, check your spam folder if the email does not arrive, and make sure your email address is correct in My Profile. [erp-password-reset]
+
+Sources:
+  [erp-support] ERP support and known issues (content/erp/erp-support.md, verified 2026-11-17)
+  [erp-password-reset] Resetting a forgotten ERP password (content/erp/erp-password-reset.md, verified 2026-11-17)
+Note: [erp-support] was last verified on 2026-11-17 and may be out of date.
+[first token 26.1 s, total 34.3 s, prompt 863 tok at 34 tok/s, answer 52 tok at 6.3 tok/s]
+
+> How do resits work?
+[retrieval 153 ms, confidence=high, best=0.821, threshold=0.81, language=en]
+  0.780  admissions-phd-requirements  [How is a supervisor assigned and how does the admission decision work?] DRAFT
+  0.821  procedures-resits  [How do I register for a resit and what does it cost?]
+  0.727  web-bachelors-of-science-bsc-in-software-engineering-se  [Software Engineering > Employment opportunities and careers]
+  0.819  procedures-resits  [How is a resit graded?]
+Resits work as follows:
+
+1. Register for a resit in the ERP system [procedures-resits].
+2. Pay the resit fee listed in the ERP for each course. The amount is not stated in the manual, but can be found in the ERP [procedures-resits].
+3. Once the fee is paid, your lecturer enters the resit score. The resit score is added to your Continuous Assessment (CA) mark [procedures-resits].
+4. The final total is capped at 79, which corresponds to a grade B+ (3.5 points) [procedures-resits].
+
+[procedures-resits]
+
+Sources:
+  [procedures-resits] Resit examinations (content/procedures/procedures-resits.md, verified 2026-11-17)
+[first token 21.5 s, total 43.2 s, prompt 788 tok at 37 tok/s, answer 134 tok at 6.2 tok/s]
+
+> Comment payer les frais de scolarité ?
+[retrieval 159 ms, confidence=high, best=0.835, threshold=0.81, language=fr]
+  0.835  finance-scholarships  [How does a student apply and what is the deadline?] DRAFT
+  0.827  finance-installments  [Can I pay my fees in installments?]
+  0.824  procedures-graduation  [How does a student apply to graduate and by when?] DRAFT
+  0.823  finance-scholarships  [Which scholarships or discounts exist and who qualifies?] DRAFT
+Pour payer les frais de scolarité, vous pouvez les payer en trois installments. Le premier versement est de 50% du montant total des frais de scolarité, le deuxième de 30% et le troisième de 20%. Pour un montant total de XAF 365,000, cela fait XAF 182,500, XAF 109,500 et XAF 73,000 respectivement.
+
+Le Département Financier (Bursar) note que le premier versement représente 50% du montant total des frais de scolarité et doit être effectué pour avoir accès au campus et au portail étudiant (le contrôle des frais est relancé le lundi 9 novembre 2026), et que la période de paiement du deuxième versement est du 20 au 30 novembre 2026.
+
+[Voir source [finance-installments]]
+
+Sources:
+  [finance-installments] Paying tuition in installments (content/finance/finance-installments.md, verified 2026-11-18)
+[first token 22.9 s, total 64.9 s, prompt 707 tok at 31 tok/s, answer 216 tok at 5.1 tok/s]
+
+> Quels sont les programmes de master proposés ?
+[retrieval 156 ms, confidence=high, best=0.836, threshold=0.81, language=fr]
+  0.826  programs-masters  [How long does the Masters program take?]
+  0.825  web-masters-programs  [Explore Our graduate Programs : ISS ISN MIT Artificial Intelligence > ICT FACULTY MASTERS PROGRAMS]
+  0.816  web-masters-programs  [Explore Our graduate Programs : ISS ISN MIT Artificial Intelligence > BMS FACULTY MASTERS PROGRAMS]
+  0.836  web-programmes  []
+Les programmes de master proposés sont les suivants :
+
+- Les programmes de master de l'ICT (Artificial Intelligence, Applied ICTs in Education, Applied ICT in Public Health, Information Systems Security, Information Technology, Information Systems and Networking) sont offerts en ligne ou sur place en anglais ou français.
+- Les programmes de master de l'ICT sont dispensés de manière en ligne ou sur place en anglais ou français.
+- Les programmes de master de l'ICT en ligne ou sur place sont dispensés en anglais ou français.
+- Les programmes de master de l'ICT en ligne ou sur place sont dispensés en anglais ou français.
+- Les programmes de master de l'ICT en ligne ou sur place sont dispensés en anglais ou français.
+- Les programmes de master de l'ICT en ligne ou sur place sont dispensés en anglais ou français.
+- Les programmes de master de l'ICT en ligne ou sur place sont dispensés en anglais ou français.
+- Les programmes de master de l'ICT en ligne ou sur place sont dispensés en anglais ou français.
+- Les programmes de master de l'ICT en ligne ou sur place sont dispensés en anglais ou français.
+[... the same line repeated 725 more times; run stopped by hand. Questions 9-12 were never reached.]

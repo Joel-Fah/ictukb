@@ -1,0 +1,210 @@
+Loading the embedding model and qwen2.5:3b …
+
+> What documents do I need for a Bachelor application?
+[retrieval 89 ms, confidence=high, best=0.902, threshold=0.81, language=en]
+  0.902  admissions-bachelor-requirements  [Which documents do I need for a Bachelor's application (new students)?]
+  0.863  admissions-bachelor-requirements  [What do Top-Up students (HND holders) need?]
+  0.843  admissions-masters-requirements  [What are the entry requirements for the Masters program?]
+  0.843  web-bachelors-degree-entry-requirements  [NEW STUDENTS]
+For a Bachelor's degree application at ICT University, you need to provide:
+
+- Certified copy of the birth certificate [admissions-bachelor-requirements]
+- Certified copies of GCE "O" Level certificate, GCE "A" Level certificate, Probatoire and Baccalaureate (new students) [admissions-bachelor-requirements]
+- For Top-Up students (HND holders), you also need a certified copy of the HND diploma from your previous school. The documents are forwarded to the Department of Transcript and Verification for checking [admissions-bachelor-requirements]
+
+This list includes all necessary documents as per the provided sources.
+
+Sources:
+  [admissions-bachelor-requirements] Bachelor admission requirements and documents (https://ictuniversity.org/bachelors-degree-entry-requirements/, verified 2026-11-18)
+[first token 8.6 s, total 31.1 s, prompt 626 tok at 75 tok/s, answer 130 tok at 5.8 tok/s]
+
+> Can I pay my fees in installments?
+[retrieval 161 ms, confidence=high, best=0.881, threshold=0.81, language=en]
+  0.881  finance-installments  [Can I pay my fees in installments?]
+  0.830  finance-late-payment  [What happens if I pay late or do not pay?]
+  0.840  finance-installments  [What happens if I do not pay?]
+  0.832  announcements-current-files  [Notice of 9 November 2026: resumption of fees control] STALE
+Yes, you can pay your fees in installments [finance-installments]. The tuition is paid in three installments: 
+- First installment of XAF 182,500 (50% of total tuition)
+- Second installment of XAF 109,500
+- Third installment of XAF 73,000
+
+You must settle the first installment to have access to the campus and student portal. The payment period for the second installment is from November 20th to December 3rd [finance-installments].
+
+Sources:
+  [finance-installments] Paying tuition in installments (content/finance/finance-installments.md, verified 2026-11-18)
+[first token 22.6 s, total 41.8 s, prompt 832 tok at 37 tok/s, answer 117 tok at 6.1 tok/s]
+
+> How do I get my transcript?
+[retrieval 164 ms, confidence=high, best=0.884, threshold=0.81, language=en]
+  0.871  procedures-transcript  [How do I get my transcript?]
+  0.884  procedures-transcript  [How do I request an official stamped transcript?]
+  0.865  procedures-transcript  [What do I need before I can get a transcript?]
+  0.820  admissions-transfer  [Can I transfer from another university?]
+To get your transcript at ICT University:
+
+1. Go to the Transcript page of the ERP system where you can see all approved results grouped by semester with GPA information.
+2. To request an official stamped transcript:
+   - Under Requests and Services choose a partial or full official transcript, select turnaround time (standard or express).
+   - State your purpose for requesting the transcript.
+   - The fee will be added to My Fees; check this page periodically for updates on processing status and reference number.
+
+[procedures-transcript] [procedures-transcript] [procedures-transcript]
+
+Before you can get a transcript, ensure all outstanding fees are settled. Costs and processing times are not specified in the ERP manual but may vary based on university policies.
+
+Sources:
+  [procedures-transcript] Request for an official transcript (content/procedures/procedures-transcript.md, verified 2026-11-17)
+[first token 13.3 s, total 39.7 s, prompt 645 tok at 50 tok/s, answer 150 tok at 5.7 tok/s]
+
+> Which Masters programs are offered?
+[retrieval 227 ms, confidence=high, best=0.856, threshold=0.81, language=en]
+  0.837  programs-masters  [How long does the Masters program take?]
+  0.838  web-masters-programs  [Explore Our graduate Programs : ISS ISN MIT Artificial Intelligence > ICT FACULTY MASTERS PROGRAMS]
+  0.831  web-masters-programs  [Explore Our graduate Programs : ISS ISN MIT Artificial Intelligence > BMS FACULTY MASTERS PROGRAMS]
+  0.856  web-masters-programs  []
+The following Masters programs are offered at ICT University:
+
+- Artificial Intelligence [web-masters-programs]
+- Applied ICTs in Education [web-masters-programs]
+- Applied ICT in Public Health [web-masters-programs]
+- Information Systems Security [web-masters-programs]
+- Information Technology [web-masters-programs]
+- Information Systems and Networking [web-masters-programs]
+
+These programs are available either online or onsite, with some having intakes in Fall, Spring, and Summer. The duration of these Master's programs is 2 years and 132 credits, including a capstone that can be an internship, thesis, or business plan depending on the program. [web-masters-programs]
+
+Sources:
+  [web-masters-programs] Masters Programs (https://ictuniversity.org/masters-programs/, verified 2026-11-25)
+[first token 19.3 s, total 50.6 s, prompt 706 tok at 37 tok/s, answer 147 tok at 4.7 tok/s]
+
+> Who do I contact if the ERP is not working?
+[retrieval 213 ms, confidence=high, best=0.876, threshold=0.81, language=en]
+  0.876  erp-support  [Who do I contact if the ERP is not working or my account has a problem?] STALE
+  0.830  erp-support  [Common problems and answers] STALE
+  0.861  erp-password-reset  [What if I no longer have access to that email?]
+  0.823  procedures-complaints  []
+If the ERP is not working, you should contact either the Database Administrator or your office [erp-support]. Additionally, check your spam folder for any missing emails related to this issue.
+
+[source id="erp-support" title="ERP support and known issues"]
+
+Sources:
+  [erp-support] ERP support and known issues (content/erp/erp-support.md, verified 2026-11-17)
+Note: [erp-support] was last verified on 2026-11-17 and may be out of date.
+[first token 21.6 s, total 31.2 s, prompt 784 tok at 37 tok/s, answer 51 tok at 5.3 tok/s]
+
+> How do resits work?
+[retrieval 157 ms, confidence=high, best=0.821, threshold=0.81, language=en]
+  0.780  admissions-phd-requirements  [How is a supervisor assigned and how does the admission decision work?] DRAFT
+  0.821  procedures-resits  [How do I register for a resit and what does it cost?]
+  0.727  web-bachelors-of-science-bsc-in-software-engineering-se  [Software Engineering > Employment opportunities and careers]
+  0.819  procedures-resits  [How is a resit graded?]
+Resit examinations work as follows:
+
+1. Register for a resit through Open Resit Registration in the ERP.
+2. The registration lists your resit courses with their respective resit fee and payment status.
+3. Pay the resit fee using the channels provided by My Fees document.
+4. After paying, your lecturer enters the resit score (out of 70).
+5. For a normal resit: add the resit score to your Continuous Assessment (CA) mark.
+6. The final total is capped at 79, which corresponds to grade B+ and 3.5 points.
+
+[procedures-resits]
+
+Sources:
+  [procedures-resits] Resit examinations (content/procedures/procedures-resits.md, verified 2026-11-17)
+[first token 13.5 s, total 37.9 s, prompt 647 tok at 49 tok/s, answer 131 tok at 5.4 tok/s]
+
+> Comment payer les frais de scolarité ?
+[retrieval 180 ms, confidence=high, best=0.835, threshold=0.81, language=fr]
+  0.835  finance-scholarships  [How does a student apply and what is the deadline?] DRAFT
+  0.827  finance-installments  [Can I pay my fees in installments?]
+  0.824  procedures-graduation  [How does a student apply to graduate and by when?] DRAFT
+  0.823  finance-scholarships  [Which scholarships or discounts exist and who qualifies?] DRAFT
+Pour payer vos frais de scolarité à l'Université ICT (Yaoundé), vous pouvez le faire par installments. Les frais sont divisés en trois versements : 
+
+1. Le premier versement est 50% du total des frais, soit XAF 182,500.
+2. Le deuxième versement est de 30%, soit XAF 109,500.
+3. Le troisième et dernier versement est de 20%, soit XAF 73,000.
+
+Vous devez régler le premier versement pour avoir accès au campus et à votre espace personnel dans l'ERP (fees control reprendra du service le lundi 9 novembre 2026). Le deuxième versement est dû entre les 20 et 30 novembre 2026.
+
+[Venteurs "finance-installments"]
+
+Je n'ai pas cette information dans la base de connaissances de l'ICT University. Veuillez contacter directement l'université. Contacts officiels (document about-contacts, en anglais) :
+- The website header shows the telephone +237 678 76 40 37 and the email admin@ictuniversity.edu.cm. The ERP footer shows the Faculty of Information and Communication Technology, ICT University Yaounde, telephone +237 682 255 000.
+[first token 18.7 s, total 54.7 s, prompt 762 tok at 41 tok/s, answer 194 tok at 5.4 tok/s]
+
+> Quels sont les programmes de master proposés ?
+[retrieval 180 ms, confidence=high, best=0.836, threshold=0.81, language=fr]
+  0.826  programs-masters  [How long does the Masters program take?]
+  0.825  web-masters-programs  [Explore Our graduate Programs : ISS ISN MIT Artificial Intelligence > ICT FACULTY MASTERS PROGRAMS]
+  0.816  web-masters-programs  [Explore Our graduate Programs : ISS ISN MIT Artificial Intelligence > BMS FACULTY MASTERS PROGRAMS]
+  0.836  web-programmes  []
+Les programmes de Master proposés à l'Université d'Informatique et des Technologies (ICT) comprennent :
+
+- Les Masters en Artificiel Intelligence [web-masters-programs]
+- Les Masters en Information Systems Security [web-masters-programs]
+- Les Masters en Informatique [web-masters-programs]
+- Les Masters en Systèmes d'Information et Réseaux (ISS ISN) [web-masters-programs]
+- Les Masters en Éducation avec les Technologies de l'information et de la Communication (ICTE) [web-masters-programs]
+- Les Masters en Santé Publique avec les Technologies de l'information et de la communication (ICTP) [web-masters-programs]
+
+Il est également mentionné que ces derniers sont dispensés soit sur le web, soit sur place en anglais ou français. Le Master en Systèmes d'Information et Réseaux propose des intakes à différents moments du calendrier académique : Fall, Spring et Summer. Les Masters ont une durée de 2 ans et 132 crédits avec un capstone qui peut être un stage d'organisation, un mémoire ou un plan d'affaires selon le programme [web-masters-programs].
+
+Sources:
+  [web-masters-programs] Masters Programs (https://ictuniversity.org/masters-programs/, verified 2026-11-25)
+[first token 4.0 s, total 53.6 s, prompt 708 tok at 193 tok/s, answer 261 tok at 5.3 tok/s]
+
+> What is my current fee balance?
+[retrieval 280 ms, confidence=high, best=0.848, threshold=0.81, language=en]
+  0.838  erp-fee-statement  [How do I view my fee statement on the ERP?]
+  0.833  erp-fee-statement  [How do I pay and prove my payment?]
+  0.848  finance-fee-notices  [What fee changes or payment deadlines have been announced recently?] DRAFT STALE
+  0.817  finance-fee-schedule  [Where can I find the full fee schedule per program and level?]
+I do not have that information [finance-fee-notices]. Please contact the Finance office for your current fee balance.
+
+Sources:
+  [finance-fee-notices] Current fee and deadline notices (content/finance/finance-fee-notices.md, verified 2026-11-17)
+Note: [finance-fee-notices] is a draft that has not been verified yet; check with the office.
+Note: [finance-fee-notices] was last verified on 2026-11-17 and may be out of date.
+[first token 27.2 s, total 33.2 s, prompt 822 tok at 31 tok/s, answer 25 tok at 4.2 tok/s]
+
+> Will I pass my resit?
+[retrieval 694 ms, confidence=high, best=0.833, threshold=0.81, language=en]
+  0.833  procedures-resits  [Who is eligible for a resit?]
+  0.828  procedures-resits  [How is a resit graded?]
+  0.816  procedures-resits  [How do I register for a resit and what does it cost?]
+  0.821  procedures-resits  [What is a special resit?]
+To determine if you will pass your resit, we need to consider several factors based on the information provided:
+
+1. [procedures-resits] states that a course with a total below 50 is eligible for a resit.
+2. The eligibility alone does not guarantee passing; it depends on how well you perform in the resit.
+
+Therefore, I cannot definitively say if you will pass your resit without knowing your current CA mark and the score you achieve during the resit. Please check these details to understand your chances of success. [procedures-resits] provides information about eligibility but not specific outcomes for individual students.
+
+Sources:
+  [procedures-resits] Resit examinations (content/procedures/procedures-resits.md, verified 2026-11-17)
+[first token 25.0 s, total 50.3 s, prompt 748 tok at 31 tok/s, answer 130 tok at 5.1 tok/s]
+
+> What's the weather in Yaounde today?
+[retrieval 209 ms, confidence=low, best=0.791, threshold=0.81, language=en]
+  0.791  about-contacts  [What is the official postal address of the university?]
+  0.777  about-contacts  [What are the general phone number and email address?]
+  0.784  web-home-2  [The ICT University > Recent Events > 15th ICT For Africa Conference 2024]
+  0.772  campus-location  [Where is the university located?]
+I don't have that information in the ICT University knowledge base. Please contact the university directly. Official contacts (from the about-contacts document):
+- The website header shows the telephone +237 678 76 40 37 and the email admin@ictuniversity.edu.cm. The ERP footer shows the Faculty of Information and Communication Technology, ICT University Yaounde, telephone +237 682 255 000.
+
+> At what time does the canteen open?
+[retrieval 181 ms, confidence=high, best=0.861, threshold=0.81, language=en]
+  0.861  canteen-hours  [At what times does the canteen open and close on each day?] DRAFT
+  0.846  canteen-hours  [Whom should a student contact about the canteen?] DRAFT
+  0.791  canteen-payment  [Which payment methods does the canteen accept (cash, mobile money, other)?] DRAFT
+  0.746  programs-curriculum-files  [Information and Communication Technology (ICT), Year 1, Fall 2026]
+[not documented yet] [not documented yet]
+
+The information about at what times the canteen opens is not provided in the given sources. Please refer to the sources for contact details if needed.
+
+I don't have that information in the ICT University knowledge base. Please contact the university directly. Official contacts (from the about-contacts document):
+- The website header shows the telephone +237 678 76 40 37 and the email admin@ictuniversity.edu.cm. The ERP footer shows the Faculty of Information and Communication Technology, ICT University Yaounde, telephone +237 682 255 000.
+[first token 8.2 s, total 16.6 s, prompt 496 tok at 64 tok/s, answer 41 tok at 4.9 tok/s]

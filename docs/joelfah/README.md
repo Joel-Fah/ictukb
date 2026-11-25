@@ -17,7 +17,7 @@ Author: Joel-Fah. Work happens on the `local-chatbot` branch of our fork of
 | [reports/](reports/) | Raw evaluation reports | |
 | [scripts/](scripts/) | Small measurement scripts (threshold sweep) | |
 | [issues/](issues/README.md) | Issues and pull requests we sent to the shared knowledge base | ongoing |
-| 02-chatbot (to come) | Phase 2: the terminal chatbot (retrieval + local language model) | not started |
+| [02-chatbot.md](02-chatbot.md) | Phase 2: the terminal chatbot, how it answers, 4 rounds of testing and fixes | done |
 | 03-evaluation (to come) | Phase 3: measuring and tuning answers and speed | not started |
 
 ## The idea in one picture

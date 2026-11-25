@@ -1,0 +1,18 @@
+
+> What is my current fee balance?
+I do not have that information. You can contact the Finance office at [finance-fee-schedule] for your current fee balance.
+
+Sources:
+  [finance-fee-schedule] Fee schedule per program and level (content/finance/finance-fee-schedule.md, verified 2026-11-18)
+
+I don't have that information in the ICT University knowledge base. Please contact the university directly. Official contacts (from the about-contacts document):
+- The website header shows the telephone +237 678 76 40 37 and the email admin@ictuniversity.edu.cm. The ERP footer shows the Faculty of Information and Communication Technology, ICT University Yaounde, telephone +237 682 255 000.
+
+> At what time does the canteen open?
+[not documented yet] [not documented yet]
+
+Source information is not provided to answer the question about canteen opening times.
+
+Sources given to the model (it did not cite them; check the answer against them):
+  [canteen-hours] Canteen opening hours (content/canteen/canteen-hours.md, verified 2026-11-17)
+Note: [canteen-hours] is a draft that has not been verified yet; check with the office.
