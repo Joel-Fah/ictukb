@@ -15,6 +15,7 @@ Author: Joel-Fah. Work happens on the `local-chatbot` branch of our fork of
 | Page | What it covers | Status |
 |---|---|---|
 | [journey.md](journey.md) | The whole story in one page | updated each phase |
+| [models.md](models.md) | Each chat model side by side: cost, accuracy, how it fails, verdict | updated per model tested |
 | [failure-log.md](failure-log.md) | Every failure and hallucination observed: what, why, fix, status | updated each phase |
 | [00-inspection.md](00-inspection.md) | Phase 0: the laptop, the repo, and the three design choices | done |
 | [01-local-setup.md](01-local-setup.md) | Phase 1: the knowledge base running locally (database, embeddings, index, website crawl) | done |
