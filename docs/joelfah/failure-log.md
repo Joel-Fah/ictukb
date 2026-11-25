@@ -9,8 +9,11 @@ Transcripts are in [reports/](reports/).
 - **Distorted fact**: a fact from the source, changed.
 - **Over-generalised**: a sourced statement applied beyond its condition.
 - **Incomplete**: a correct answer missing items that were in the passages.
+- **False refusal**: "I don't have that information" when the passages did contain it.
 - **Format/noise**: no factual error, but output that misleads or clutters.
 - **System**: a failure of our setup, not of the model.
+
+Why each type happens is explained [after the table](#why-models-behave-this-way).
 
 | # | When | Question | What happened | Source says | Type | Root cause | Fix | Status |
 |---|---|---|---|---|---|---|---|---|
@@ -65,3 +68,134 @@ Transcripts are in [reports/](reports/).
 - **What's left is subtle**: Phase 3's open entries (28-31) are facts from the passages applied to the wrong case,
   a superseded date, a dropped caveat. No string check catches those; they need a human, a stronger model, or
   content written one case per section.
+
+---
+
+## Why models behave this way
+
+The explanations below are the generally accepted mechanisms behind each type of failure, matched to what we saw.
+We can't look inside the model to prove which mechanism caused a given answer; treat them as the most likely
+reasons, supported by the patterns in the table (which failures repeat, what fixed them, what didn't).
+
+### The one idea behind almost everything: a language model predicts plausible text
+
+A model like Qwen doesn't look facts up. It writes one token (a word piece) at a time, each time choosing a likely
+next token given everything before it: our rules, the passages, the question, and what it has written so far. What
+counts as "likely" was learned from huge amounts of text during training. Retrieval-augmented generation works
+because the passages make the *correct* continuation very likely: if the passage says "20 to 30 November 2026",
+copying it is the most probable thing to write. **Failures happen whenever something else becomes more probable than
+copying the passage**: a pattern learned in training, a habit of helpful assistants, or a mistake earlier in the
+same answer that the model then continues from. A model has no built-in sense of "I'm not sure"; it produces fluent
+text either way, which is why a wrong answer reads exactly as confidently as a right one.
+
+Small models (1.5B-3B parameters) follow this pattern more often, because they have less capacity to keep the
+instructions, several passages and the question all in view at once.
+
+### Invented fact (failures 10, 11, 13-15, 22-26, 31)
+
+**What's happening:** the model fills a gap with what *usually* comes next in similar text.
+
+- **Strong patterns from training beat the passages.** University websites usually have addresses like
+  `finance@<domain>`; when the model writes "contact the Finance office at", an email in that shape is the most
+  likely continuation, even though no such address is in the passages (failures 13, 15). Likewise "ERP" is usually
+  followed by an expansion in explanatory text, so it supplies one, wrongly ("Electronic Records Processing",
+  failure 24), and a transcript request "usually" takes a few business days (failure 22).
+- **Trained to be helpful.** Chat models are tuned on examples where a complete, confident, helpful answer is
+  rewarded. "I don't know" is rarer in that training data than an answer, so a gap gets filled. A redirection
+  ("contact the Finance office") feels incomplete without a contact detail, so one gets added.
+- **Translation turns copying into composing.** When answering in French, the model can't copy the English passage;
+  it has to rewrite it, and rewriting is where it composes freely: it "translates" the university's name into a
+  plausible French institution name (failures 14, 25) or "stamped" into "stamped by the post office" (26).
+- **Headings look like answers.** A section titled "Which payment methods does the canteen accept (cash, mobile
+  money, other)?" with an empty body still contains the words "cash, mobile money". The model can't tell that the
+  heading is a question awaiting an answer, so it turns the words into a statement (failure 23).
+- **Decoding settings can corrupt copying.** A repeat penalty lowers the probability of tokens already used. The
+  model had rephrased the source's "20 to 30 November 2026" as "from November 20th to ...": to finish the range it
+  needed "November" again, but a strong penalty (1.15) made that token less likely than a nearby month, so it wrote
+  "December 3rd" (failure 10). At Qwen's default (1.05) it copied the range correctly every time.
+
+**Why rules alone didn't stop it:** an instruction like "never write an email that isn't in the sources" is just
+more text in the prompt; it shifts probabilities but doesn't forbid anything. When the learned pattern is strong
+enough, it wins (failure 15 survived the rule). That's why the reliable fixes were in code: the redactor removes the
+email whatever the model does.
+
+### Distorted fact (failures 16, 27-29)
+
+**What's happening:** the right pieces, wrongly assembled.
+
+- **Several similar facts compete.** A passage holding three registration deadlines (6 November, 19 November,
+  23 November, with only the last one valid) gives the model three plausible dates; small models don't reliably
+  track "the most recent notice wins", so they may pick a superseded one (failure 28).
+- **Two cases in one section get blended.** "Normal resit: out of 70, added to CA" and "special resit: out of 100"
+  sit side by side; when summarising, the model keeps "resit" and "out of 100" and loses which case each belongs to
+  (failure 29). Two offices in one sentence (the Deans evaluate credits, the Admissions Office admits) get swapped the
+  same way (failure 27).
+- **Reasoning beyond the text.** Asked "will I pass?", the model tries to be useful by deriving a rule from the
+  numbers it has ("capped at 79" becomes "you pass if the total doesn't exceed 79", failure 16). Small models are
+  weak at this kind of reasoning and don't flag that they are reasoning rather than quoting.
+
+### Over-generalised (failures 18, 19, 30)
+
+**What's happening:** the condition is dropped, the fact is kept. Conditions ("only for Top-Up students", "if you no
+longer have access to your email", "the level it applies to is not specified") are usually short qualifiers attached
+to a longer statement. When the model compresses a passage into a short answer, qualifiers are the first thing to
+go, because the main statement alone already reads as a complete, plausible sentence. The result answers a slightly
+different question than the one the source answered.
+
+### Incomplete (failure 17, and the FIN-05 amounts)
+
+**What's happening:** the model stops early or follows one passage. Lists spread across passages, or a long list
+followed by more text, compete with the model's learned sense of how long an answer "should" be. Once it has written
+a list that looks complete (six Master's programmes), ending the list is a likely continuation, even if three more
+items were in the passage. When two passages overlap (the website page and the curated document), the model tends to
+follow one of them.
+
+### False refusal (failures 30, 32)
+
+**What's happening:** the answer exists but doesn't look like an answer. "The complete tuition is XAF 365,000. The
+programme and level it applies to are not specified" doesn't match the question "How much are Bachelor fees?" word
+for word, and the caveat sounds like "not specified", so the model concludes the information is missing. Our own
+rules make this more likely: "if the sources don't contain the specific information, say so" is a strong instruction,
+and with an uncertain match the safe-looking refusal wins. (Failure 32 is different: the passage wasn't in the
+prompt at all, because top-k 3 cut it.)
+
+### Format/noise: loops, copied markup, odd citations (failures 7, 8, 12)
+
+- **Loops** (failure 7): with near-greedy decoding, the model picks the most likely token each time. Once it has
+  written a line twice, writing it a third time becomes *more* likely (repetition reinforces itself), and nothing
+  in the text says "stop". Small models fall into this more easily, especially in a long list. A length cap and a
+  repetition guard break the cycle from outside.
+- **Copied markup** (failure 8): crawled pages contain navigation buttons as Markdown links. To the model they're
+  just text in the passage, and copying passage text is exactly what we asked for.
+- **Citation formats** (failure 12): "[finance-installments]" is an unusual pattern, rarely seen in training, so the
+  model sometimes writes its own variant. Matching ids anywhere in the text made our code robust to that.
+
+### Similarity can't judge relevance (failures 4-6)
+
+The embedding model turns each text into a vector that captures its *topic*, not the facts it states. "What is my
+fee balance?" and the fee-statement document are about the same topic, so they score as very similar (0.848) even
+though the document can't answer the question. In French, the English-only content shares no words with the question,
+so the keyword half of the search contributes nothing and only the vector half works, with less precision. A
+similarity threshold can filter off-topic questions, but deciding whether a passage *answers* a question needs
+something that reads it (a model or a person).
+
+### Sampling variance (failure 33)
+
+At temperature 0.1 the model still samples: among near-equally likely tokens, it picks randomly. Two runs diverge at
+the first such choice, and everything after that differs because each token depends on the ones before. That's why
+the same question could be right in one run and wrong in the next. A fixed seed makes the random choices repeatable,
+but tiny numerical differences (multi-threaded arithmetic, reuse of cached prompt work) can still flip a near-tie late
+in an answer.
+
+### What this means in practice
+
+| Failure type | Reduced by | Reliably stopped by |
+|---|---|---|
+| Invented contact details, links | prompt rules | **code** (redaction against the passages) |
+| Invented or out-of-source numbers and dates | correct decoding settings | **code** (flagging), except small common numbers |
+| Invented names, expansions (French) | precise per-question rules ("call it ICT University") | nothing yet: needs checking |
+| Answers from empty sections | - | **code** (drop placeholder-only passages) |
+| Distorted facts, dropped conditions, incomplete lists | stronger model, clearer content (one case per section, valid date only) | a human check |
+| False refusals | content that states facts and caveats separately | a human check |
+| Loops | decoding settings | **code** (length cap, repetition guard) |
+| On-topic unanswerable questions | similarity threshold (partly) | an answer-verification step, or the model's refusal |
