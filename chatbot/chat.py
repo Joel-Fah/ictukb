@@ -46,6 +46,9 @@ class Turn:
     stopped: str = ""  # "" | "loop" (repetition guard) | "length" (answer token cap)
     unverified: list[str] = field(default_factory=list)  # numbers/months in the answer that the sources don't contain
     redacted: list[str] = field(default_factory=list)  # emails/URLs the model wrote that the sources don't contain
+    fallback: str = ""  # "" | "threshold" (best passage below MIN_SIMILARITY) | "placeholders" (only [[TO FILL]])
+    sources_shown: list[str] = field(default_factory=list)  # ids listed under the answer (cited, or given if none cited)
+    contacts_text: str = ""  # official contacts shown after a refusal by the model
 
 
 REDACTED_NOTE = {
@@ -78,7 +81,11 @@ class Assistant:
         self.contacts = self.retriever.contacts()
         self.llm.warm_up()
 
-    def answer(self, question: str, out=sys.stdout, debug: bool = False) -> Turn:
+    def answer(self, question: str, out=sys.stdout, debug: bool = False, footer=None, on_retrieval=None) -> Turn:
+        """Answer one question. The answer text goes to `out`; sources, notes and warnings go to `footer` (the same
+        stream by default, as in the terminal; the web page passes a separate one and shows them from the Turn).
+        `on_retrieval(turn)` is called once the passages are known, before the model starts writing."""
+        footer = out if footer is None else footer
         started = time.perf_counter()
         language = detect_language(question)
         turn = Turn(question, language, self.retriever.retrieve(question))
@@ -94,15 +101,16 @@ class Assistant:
         categories = {p.category for p in r.passages[:2]}
         if r.confidence != "high":
             # Below the threshold the model is not called at all: a refusal can't be wrong.
-            turn.answer = fallback_message(language, self.contacts, categories)
-            print(turn.answer, file=out)
-            turn.total_s = time.perf_counter() - started
-            return turn
-
-        context, turn.context_passages = build_context(r.passages, self.cfg.max_chunk_chars, self.cfg.max_context_chars,
-                                                       self.cfg.relative_cutoff)
-        if not turn.context_passages:
-            # Every relevant passage is an unfilled placeholder: nothing to answer from, so don't ask the model.
+            turn.fallback = "threshold"
+        else:
+            context, turn.context_passages = build_context(r.passages, self.cfg.max_chunk_chars,
+                                                           self.cfg.max_context_chars, self.cfg.relative_cutoff)
+            if not turn.context_passages:
+                # Every relevant passage is an unfilled placeholder: nothing to answer from, so don't ask the model.
+                turn.fallback = "placeholders"
+        if on_retrieval:
+            on_retrieval(turn)
+        if turn.fallback:
             turn.answer = fallback_message(language, self.contacts, categories)
             print(turn.answer, file=out)
             turn.total_s = time.perf_counter() - started
@@ -127,29 +135,31 @@ class Assistant:
         if turn.stats.get("done_reason") == "length":
             turn.stopped = "length"
         if turn.stopped:
-            print(STOPPED[turn.stopped][language], file=out)
+            print(STOPPED[turn.stopped][language], file=footer)
         turn.cited = cited_ids(turn.answer, turn.context_passages)
         turn.redacted = redactor.removed
         turn.unverified = [x for x in unverified_facts(turn.answer, context, question) if x not in turn.redacted]
         if turn.redacted:
-            print("\n" + REDACTED_NOTE[language], file=out)
+            print("\n" + REDACTED_NOTE[language], file=footer)
         if turn.unverified:
-            print("\n" + UNVERIFIED[language].format(items=", ".join(turn.unverified)), file=out)
+            print("\n" + UNVERIFIED[language].format(items=", ".join(turn.unverified)), file=footer)
 
         if is_refusal(turn.answer) and not turn.cited:
-            print("\n" + fallback_message(language, self.contacts, categories), file=out)
+            turn.contacts_text = fallback_message(language, self.contacts, categories)
+            print("\n" + turn.contacts_text, file=footer)
         else:
             # Cited sources; if the model cited nothing, list what it was given so the answer can still be checked.
-            shown = turn.cited or list(dict.fromkeys(p.doc_id for p in turn.context_passages))
-            print("\n" + ("Sources:" if turn.cited else SOURCES_NOT_CITED[language]), file=out)
+            turn.sources_shown = turn.cited or list(dict.fromkeys(p.doc_id for p in turn.context_passages))
+            print("\n" + ("Sources:" if turn.cited else SOURCES_NOT_CITED[language]), file=footer)
             by_id = {p.doc_id: p for p in turn.context_passages}
-            for doc_id in shown:
+            for doc_id in turn.sources_shown:
                 p = by_id[doc_id]
-                print(f"  [{doc_id}] {p.title} ({p.source}, verified {p.last_verified})", file=out)
-            for note in source_notes(language, turn.context_passages, shown):
-                print(note, file=out)
+                print(f"  [{doc_id}] {p.title} ({p.source}, verified {p.last_verified})", file=footer)
+            for note in source_notes(language, turn.context_passages, turn.sources_shown):
+                print(note, file=footer)
             if is_refusal(turn.answer):
-                print("\n" + fallback_message(language, self.contacts, categories), file=out)
+                turn.contacts_text = fallback_message(language, self.contacts, categories)
+                print("\n" + turn.contacts_text, file=footer)
 
         turn.total_s = time.perf_counter() - started
         if debug:
@@ -158,7 +168,7 @@ class Assistant:
             pps = (s.get("prompt_eval_count") or 0) / ((s.get("prompt_eval_duration") or 1) / 1e9)
             print(f"[first token {turn.first_token_s or 0:.1f} s, total {turn.total_s:.1f} s, "
                   f"prompt {s.get('prompt_eval_count')} tok at {pps:.0f} tok/s, "
-                  f"answer {s.get('eval_count')} tok at {tps:.1f} tok/s]", file=out)
+                  f"answer {s.get('eval_count')} tok at {tps:.1f} tok/s]", file=footer)
         return turn
 
 

@@ -7,14 +7,16 @@ uses the same pipeline as the terminal chat (chat.Assistant), so every safeguard
 contact redaction, number/date check, draft/stale notes.
 
 API: POST /api/ask with JSON {"question": "..."} returns newline-delimited JSON events:
-    {"t": "text", "v": "..."}   a piece of the displayed answer (answer text, then sources and notes)
-    {"t": "done", "turn": {...}} confidence, cited sources, flags and timings
+    {"t": "retrieval", ...}      passages found, best similarity, whether the model will be asked
+    {"t": "text", "v": "..."}    a piece of the answer as it is written
+    {"t": "done", "turn": {...}} status (grounded / check / not_found) with reasons, sources, contacts, metrics
     {"t": "error", "v": "..."}
 """
 
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import os
 import sys
@@ -47,25 +49,90 @@ class EventWriter:
         pass
 
 
+UPSTREAM_FILES = "https://github.com/Egbemichel/ictukb/blob/main/"
+
+
+def source_url(source: str) -> str:
+    """Website pages link to themselves; content files link to the shared knowledge base on GitHub."""
+    return source if source.startswith(("http://", "https://")) else UPSTREAM_FILES + source
+
+
+def behaviour(turn) -> tuple[str, list[str]]:
+    """How the answer was produced, as one of three states and the reasons behind it.
+
+    grounded  the model answered and cited its sources; no check flagged anything
+    check     the model answered, but something deserves a look (listed in the reasons)
+    not_found nothing to answer from: below the threshold, only unfilled drafts, or the model declined
+    """
+    from .prompt import is_refusal
+
+    if turn.fallback == "threshold":
+        return "not_found", [f"best passage {turn.retrieval.best_similarity:.2f} is below the "
+                             f"{turn.retrieval.threshold:.2f} threshold, so the model was not asked"]
+    if turn.fallback == "placeholders":
+        return "not_found", ["the matching sections are unfilled drafts ([[TO FILL]]), so the model was not asked"]
+    if is_refusal(turn.answer):
+        reasons = ["the model read the passages and found no answer"]
+        if turn.redacted:
+            reasons.append(f"{len(turn.redacted)} contact detail(s) not in the sources were removed")
+        return "not_found", reasons
+    by_id = {p.doc_id: p for p in turn.context_passages}
+    reasons = []
+    if not turn.cited:
+        reasons.append("no source cited: compare the answer with the sources given")
+    if turn.unverified:
+        reasons.append(f"not found in the sources: {', '.join(turn.unverified)}")
+    if turn.redacted:
+        reasons.append(f"{len(turn.redacted)} contact detail(s) not in the sources were removed")
+    if turn.stopped:
+        reasons.append("answer stopped: " + ("repetition" if turn.stopped == "loop" else "length limit"))
+    if any(by_id[d].status != "verified" for d in turn.sources_shown if d in by_id):
+        reasons.append("based on a draft document that has not been verified")
+    if any(by_id[d].stale for d in turn.sources_shown if d in by_id):
+        reasons.append("a source is past its re-verification date")
+    return ("check" if reasons else "grounded"), reasons
+
+
 def turn_summary(turn) -> dict:
-    """What the page shows under an answer: never the passages' full text, only references and measurements."""
+    """Everything the page shows around an answer: never the passages' text, only references and measurements."""
     by_id = {p.doc_id: p for p in turn.retrieval.passages}
+    status, reasons = behaviour(turn)
+    s = turn.stats or {}
+
+    def rate(count_key: str, duration_key: str) -> float | None:
+        count, duration = s.get(count_key), s.get(duration_key)
+        return round(count / (duration / 1e9), 1) if count and duration else None
+
     return {
-        "confidence": turn.retrieval.confidence,
-        "best_similarity": round(turn.retrieval.best_similarity, 3),
-        "threshold": turn.retrieval.threshold,
+        "status": status,
+        "reasons": reasons,
         "language": turn.language,
         "used_llm": turn.used_llm,
-        "cited": [{"id": d, "title": by_id[d].title, "source": by_id[d].source, "last_verified": by_id[d].last_verified,
-                   "status": by_id[d].status, "stale": by_id[d].stale} for d in turn.cited if d in by_id],
+        "sources": [{"id": d, "title": by_id[d].title, "url": source_url(by_id[d].source),
+                     "last_verified": by_id[d].last_verified, "draft": by_id[d].status != "verified",
+                     "stale": by_id[d].stale, "cited": d in turn.cited} for d in turn.sources_shown if d in by_id],
+        "contacts": turn.contacts_text,
         "passages": [{"id": p.doc_id, "heading": p.heading, "similarity": round(p.similarity, 3),
                       "used": p in turn.context_passages} for p in turn.retrieval.passages],
-        "unverified": turn.unverified,
-        "redacted": len(turn.redacted),
-        "stopped": turn.stopped,
-        "first_token_s": round(turn.first_token_s, 1) if turn.first_token_s else None,
-        "total_s": round(turn.total_s, 1),
+        "metrics": {
+            "confidence": turn.retrieval.confidence,
+            "best_similarity": round(turn.retrieval.best_similarity, 3),
+            "threshold": turn.retrieval.threshold,
+            "retrieval_ms": round(turn.retrieval.seconds * 1000),
+            "first_token_s": round(turn.first_token_s, 1) if turn.first_token_s else None,
+            "total_s": round(turn.total_s, 1),
+            "prompt_tokens": s.get("prompt_eval_count"),
+            "prompt_tok_s": rate("prompt_eval_count", "prompt_eval_duration"),
+            "answer_tokens": s.get("eval_count"),
+            "answer_tok_s": rate("eval_count", "eval_duration"),
+        },
     }
+
+
+def retrieval_event(turn) -> dict:
+    r = turn.retrieval
+    return {"t": "retrieval", "passages": len(r.passages), "used": len(turn.context_passages),
+            "best": round(r.best_similarity, 3), "threshold": r.threshold, "fallback": turn.fallback}
 
 
 def make_handler(assistant, info: dict):
@@ -129,7 +196,10 @@ def make_handler(assistant, info: dict):
             writer = EventWriter(self.wfile)
             try:
                 with lock:
-                    turn = assistant.answer(question, out=writer)
+                    # The footer (sources, notes, contacts) is not streamed as text: the page builds it from the
+                    # structured "done" event instead.
+                    turn = assistant.answer(question, out=writer, footer=io.StringIO(),
+                                            on_retrieval=lambda t: writer.send(retrieval_event(t)))
                 writer.send({"t": "done", "turn": turn_summary(turn)})
             except (BrokenPipeError, ConnectionResetError):
                 pass  # the page was closed mid-answer

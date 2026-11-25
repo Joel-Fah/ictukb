@@ -58,6 +58,53 @@ Starts the database if it isn't up, checks Ollama, then runs the terminal chat, 
 - **Tested:** 7 unit tests with a fake assistant (streaming, bad input, wrong content type, foreign host name), and a
   live request through `run.sh --web`: correct, cited installment answer, first words after 26 s, done in 44 s.
 
+## Redesign after the first review
+
+The first version of the page worked but was rejected in review: "lazy and boring", odd interactions, a scrollbar in
+the text field. What was wrong, and what changed:
+
+| Problem | Cause | Now |
+|---|---|---|
+| Scrollbar in a one-line text field | Fixed 48 px height with 12 px padding and a ~25 px line: one line needed ~49 px | The field starts at one line, grows with the text up to ~8 lines (200 px), and only then scrolls; recomputed on resize |
+| Example questions sent immediately | Chips called "send" directly | Suggestion cards fill the composer; you edit or press Enter |
+| Page jumped to the bottom on every streamed word | Unconditional scrolling | Follows the answer only if you are already at the bottom; otherwise a "↓ Latest" button appears |
+| No way to stop an answer | - | The send button becomes Stop while an answer is written (closing the request also stops Ollama) |
+| Sources, notes and metrics mixed into the answer text | The server streamed the terminal's output, footer included | The server streams **only the answer text**; sources, notes, contacts and metrics arrive as structured data and get their own panel |
+| A blank 20-40 s wait | No progress information | Live progress: "Searching…", then "Found 4 passages (best match 0.88) · writing…", with a running timer |
+| No sense of how the model behaved | - | A colour-coded status on every answer (below) |
+
+**Behaviour status** (computed on the server from the same checks the terminal uses):
+
+| Badge | Meaning |
+|---|---|
+| green *Grounded in sources* | the model answered and cited sources; no check flagged anything |
+| amber *Check this answer* | something deserves a look, listed under "Worth checking": no citation, a number or date not found in the sources, a removed contact, a draft or outdated source, an answer stopped early |
+| slate *Not in the knowledge base* | below the similarity threshold (model not called), only unfilled drafts, or the model found no answer; the reason is shown |
+
+Each answer card also has: citation chips that jump to their source card; source cards with title, document id,
+verification date and *draft* / *may be outdated* / *not cited* tags; a metrics strip (match score coloured by its
+margin over the threshold, search time, time to first words coloured by speed, total time, tokens/s, prompt size);
+a collapsible list of all retrieved passages with similarity bars and which ones the model saw; a Copy button;
+a timestamp. User messages are right-aligned bubbles with timestamps. Light and dark themes, phone layout.
+
+To support this, `Assistant.answer()` gained two optional parameters (`footer`, `on_retrieval`); the terminal output
+is unchanged (checked by running the terminal on a fallback and a cited question after the change).
+
+![Conversation with the three statuses](images/web-conversation.png)
+
+*Rendered in headless Chrome with sample answers (a mocked server), to check the layout without the models.*
+
+| Start screen | Phone, dark theme |
+|---|---|
+| ![Start screen](images/web-empty.png) | ![Phone, dark](images/web-mobile-dark.png) |
+
+**Checked visually before showing it**: the first render exposed three bugs that the unit tests couldn't see (the
+progress row stayed visible because `display: flex` overrode the `hidden` attribute; lists after an intro line
+weren't recognised; a double focus outline), and the phone view showed a wrapping top bar and a clipped composer. All
+fixed and re-rendered. Live check against the real models: the new events work, and the "not found" status reported
+a refusal in which the redactor had removed an invented address. That case led to one more fix: a refusal now also
+lists the removed contact among its reasons.
+
 ## Trade-offs
 
 | Choice | Gained | Gave up |
