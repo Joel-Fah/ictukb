@@ -18,3 +18,12 @@ gh issue create -R Egbemichel/ictukb --title "$(head -1 "$f" | sed 's/^# //')" -
 
 Content issues (missing information per category, retrieval failures PRG-05, TTB-04, PPL-05, PPL-06, MHP-01 to 03)
 come after the local evaluation, so they carry fresh evidence.
+
+## Pull requests
+
+| PR | Branch | Fixes | Status |
+|---|---|---|---|
+| [#7](https://github.com/Egbemichel/ictukb/pull/7) | `docs/embedding-provider-refs` | #6 | open |
+| [#8](https://github.com/Egbemichel/ictukb/pull/8) | `docs/readme-local-embeddings` | #2 (docs part) | open |
+
+Both add the same `contributors.yml` entry; when one merges, the other's identical change should merge cleanly.
