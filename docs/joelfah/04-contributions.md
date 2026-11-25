@@ -20,17 +20,17 @@ missing, where, and who holds it, so the people with access to the offices can f
 | [PR #7](https://github.com/Egbemichel/ictukb/pull/7) | Docs: embedding provider references (fixes #6) | open |
 | [PR #8](https://github.com/Egbemichel/ictukb/pull/8) | README: local setup with fastembed (fixes #2) | open |
 
-## Phase 4 drafts (not posted yet)
+## Phase 4 issues (posted 2026-11-25: #10 to #18)
 
 All in [issues/](issues/README.md):
 
 | Draft | What it asks for | Evidence |
 |---|---|---|
-| 07 | Configure the 8 Google Sheets that 14 uncovered questions depend on | every `sheet_id` in `sources/sheets.yml` is empty; templates already exist |
-| 08-12 | Fill 18 draft documents (campus, canteen, transport, student life, academic and finance) | each unfilled section listed, with what to collect and from which office (`docs/upload-checklist.csv`) |
-| 13 | Four writing patterns that make answers wrong | 80 hand-checked answers: e.g. FIN-01 failed in 5 of 5 runs because the fee and its caveat share a paragraph |
-| 14 | 26 French golden questions | French hit@5 20/26 vs English 26/26 on the same questions |
-| 15 | Multi-hop failures: one document fills the top 5 (MHP-01); MHP-02 expects a document without the answer | reproduced on two embedding models |
+| [07 → #10](https://github.com/Egbemichel/ictukb/issues/10) | Configure the 8 Google Sheets that 14 uncovered questions depend on | every `sheet_id` in `sources/sheets.yml` is empty; templates already exist |
+| 08-12 → [#11](https://github.com/Egbemichel/ictukb/issues/11)-[#15](https://github.com/Egbemichel/ictukb/issues/15) | Fill 18 draft documents (campus, canteen, transport, student life, academic and finance) | each unfilled section listed, with what to collect and from which office (`docs/upload-checklist.csv`) |
+| [13 → #16](https://github.com/Egbemichel/ictukb/issues/16) | Four writing patterns that make answers wrong | 80 hand-checked answers: e.g. FIN-01 failed in 5 of 5 runs because the fee and its caveat share a paragraph |
+| [14 → #17](https://github.com/Egbemichel/ictukb/issues/17) | 26 French golden questions | French hit@5 20/26 vs English 26/26 on the same questions |
+| [15 → #18](https://github.com/Egbemichel/ictukb/issues/18) | Multi-hop failures: one document fills the top 5 (MHP-01); MHP-02 expects a document without the answer | reproduced on two embedding models |
 
 Drafts 07-12 together cover all 35 golden questions that `docs/evaluation-latest.md` lists as "Not yet covered".
 

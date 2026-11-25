@@ -20,7 +20,7 @@ Author: Joel-Fah. Work happens on the `local-chatbot` branch of our fork of
 | [01-local-setup.md](01-local-setup.md) | Phase 1: the knowledge base running locally (database, embeddings, index, website crawl) | done |
 | [02-chatbot.md](02-chatbot.md) | Phase 2: the terminal chatbot, how it answers, 4 rounds of testing and fixes | done |
 | [03-evaluation.md](03-evaluation.md) | Phase 3: 5 evaluation runs, model and setting comparisons, weakest areas, measurement noise | done |
-| [04-contributions.md](04-contributions.md) | Phase 4: what we sent upstream, what we prepared, and why no content was filled | drafts ready |
+| [04-contributions.md](04-contributions.md) | Phase 4: what we sent upstream, what we prepared, and why no content was filled | issues posted |
 | [issues/](issues/README.md) | Issues and pull requests we sent to the shared knowledge base | ongoing |
 | [reports/](reports/) | Raw transcripts and evaluation reports (Phases 1-2; Phase 3 reports are in `chatbot/reports/`) | |
 | [scripts/](scripts/) | Small measurement scripts (threshold sweep) | |
