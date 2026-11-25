@@ -115,7 +115,7 @@ lists the removed contact among its reasons.
 | Smooth open/close | The native `<details>` can't animate its height in most browsers, so the accordion is a button plus a CSS grid row animating from `0fr` to `1fr` (and opacity); closed content is `inert` (skipped by Tab and screen readers); reduced-motion users get no animation |
 | No scrollbar in the text field | Hidden scrollbar; the field still scrolls with the wheel and keys past ~8 lines |
 | Icon and copy button | Remix Icon `robot-3-line` (top bar, answers, browser tab) and `file-copy-line` + "Copy" (Apache 2.0, credited in the file) |
-| Citations as superscripts | Citations are footnote numbers (`<sup>`), numbered by first appearance **while streaming**, the same order as the final source list, so numbers don't change when the answer completes; repeated citations collapse into one; clicking a number opens the sources and highlights the card |
+| Citations as superscripts | Citations are footnote numbers in their small pill containers, raised with `<sup>`, numbered by first appearance **while streaming**, the same order as the final source list, so numbers don't change when the answer completes; repeated citations collapse into one; clicking a number opens the sources and highlights the card |
 
 ![Accordion open and closed, footnotes, a queued question with the locked composer](images/web-queued-busy.png)
 

@@ -96,10 +96,10 @@
   .answer ul, .answer ol { margin: 0 0 10px; padding-left: 22px; }
   .answer li { margin: 3px 0; }
   /* Citations as footnote numbers */
-  sup.fn { font-size: .7em; line-height: 0; vertical-align: super; margin-left: 1px; }
-  sup.fn + sup.fn::before { content: ","; color: var(--faint); margin-right: 1px; }
-  .cite { color: var(--accent); font-weight: 650; text-decoration: none; padding: 0 1px; border-radius: 3px; }
-  .cite:hover { background: var(--accent-soft); text-decoration: none; }
+  sup.fn { line-height: 0; vertical-align: super; margin-left: 2px; }
+  .cite { display: inline-block; font: 600 10px/1 var(--mono); color: var(--accent); background: var(--accent-soft);
+          border-radius: 5px; padding: 3px 4px; text-decoration: none; }
+  .cite:hover { text-decoration: none; filter: brightness(.95); }
   .removed { font-size: 12px; color: var(--err); background: var(--err-soft); border-radius: 6px; padding: 1px 6px; }
   .caret { display: inline-block; width: 7px; height: 1.05em; background: var(--accent); vertical-align: -2px;
            margin-left: 2px; animation: pulse .9s infinite; border-radius: 1px; }
