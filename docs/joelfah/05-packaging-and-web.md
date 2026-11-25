@@ -119,6 +119,17 @@ lists the removed contact among its reasons.
 
 ![Accordion open and closed, footnotes, a queued question with the locked composer](images/web-queued-busy.png)
 
+### Third review
+
+| Feedback | Change |
+|---|---|
+| Blur behind the top bar | The blur was already there but invisible: the page was a column (bar, messages, composer), so nothing ever scrolled *under* the bar. The conversation now fills the window and the bar and composer float over it; their real heights are kept in CSS variables by a `ResizeObserver` (the composer grows with the text), and the conversation is padded to stay clear of both. The bar is frosted (blur + saturation over a semi-transparent background) |
+| Sticky avatar | The answer's avatar is `position: sticky` inside its own grid row: it stays just under the top bar while its answer is on screen and leaves with it |
+| Progressive blur behind the composer | Five stacked layers: four `backdrop-filter` blurs (1, 2, 4, 8 px), each masked to a lower band, plus a fade into the background colour, so messages dissolve gradually instead of being cut off |
+| Citations not lined up with what they cite | Two causes. (1) The pills were inline-*block*: browsers may break a line before such a box, leaving a number alone at the start of the next line; they are now inline (with `box-decoration-break: clone`), glued to the cited word. (2) The model often writes citations on a line of their own under a list ("[erp-first-login] [erp-first-login]"); that line became its own paragraph. Such lines are now attached to the previous sentence or list item, before its final punctuation, and footnotes already there aren't repeated: "dashboard¹ ²." |
+
+![Sticky avatar, frosted top bar, progressive blur under the composer, footnotes glued to the text](images/web-sticky-blur.png)
+
 ## Trade-offs
 
 | Choice | Gained | Gave up |

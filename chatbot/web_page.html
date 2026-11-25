@@ -25,7 +25,11 @@
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }  /* otherwise display:flex rules win over the hidden attribute */
   html, body { height: 100%; }
-  body { margin: 0; background: var(--bg); color: var(--text); display: flex; flex-direction: column;
+  /* The conversation fills the whole window; the top bar and the composer float over it, so messages scroll
+     behind them (frosted top bar, progressive blur under the composer). Their heights are kept in --top-h and
+     --comp-h by a ResizeObserver, so the conversation is padded to stay clear of both. */
+  :root { --top-h: 51px; --comp-h: 96px; }
+  body { margin: 0; background: var(--bg); color: var(--text); overflow: hidden;
          font: 15px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
          -webkit-font-smoothing: antialiased; }
   button { font: inherit; color: inherit; }
@@ -35,8 +39,10 @@
   svg { display: block; }
 
   /* Top bar */
-  .top { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 85%, transparent);
-         backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+  .top { position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+         background: color-mix(in srgb, var(--bg) 68%, transparent);
+         -webkit-backdrop-filter: blur(16px) saturate(170%); backdrop-filter: blur(16px) saturate(170%);
+         border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent); }
   .top-in { max-width: 820px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
   .mark { width: 30px; height: 30px; border-radius: 9px; background: var(--accent); color: var(--accent-text);
           display: grid; place-items: center; flex: none; }
@@ -52,8 +58,10 @@
   .icon-btn:hover { background: var(--surface-2); color: var(--text); }
 
   /* Conversation */
-  #scroller { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
-  #log { max-width: 820px; margin: 0 auto; padding: 18px 16px 24px; }
+  #scroller { position: fixed; inset: 0; overflow-y: auto; scroll-behavior: smooth;
+              scroll-padding-top: calc(var(--top-h) + 8px); scroll-padding-bottom: calc(var(--comp-h) + 8px); }
+  #log { max-width: 820px; margin: 0 auto;
+         padding: calc(var(--top-h) + 18px) 16px calc(var(--comp-h) + 28px); }
   .empty { text-align: center; padding: 9vh 0 10px; }
   .empty h1 { font-size: 26px; margin: 0 0 6px; letter-spacing: -.3px; }
   .empty p { color: var(--muted); margin: 0 auto 26px; max-width: 520px; }
@@ -74,7 +82,10 @@
   .user .meta { margin-top: 4px; }
 
   .bot { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; }
-  .bot .mark { width: 30px; height: 30px; }
+  /* The avatar rides along with its answer: it sticks just under the top bar while the answer is on screen,
+     and leaves with it once scrolled past (sticky inside its own grid row). */
+  .bot .mark { width: 30px; height: 30px; position: sticky; top: calc(var(--top-h) + 12px); align-self: start;
+               box-shadow: var(--shadow); }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
           overflow: hidden; }
   .card-head { display: flex; align-items: center; gap: 8px; padding: 9px 14px 0; flex-wrap: wrap; }
@@ -96,9 +107,13 @@
   .answer ul, .answer ol { margin: 0 0 10px; padding-left: 22px; }
   .answer li { margin: 3px 0; }
   /* Citations as footnote numbers */
-  sup.fn { line-height: 0; vertical-align: super; margin-left: 2px; }
-  .cite { display: inline-block; font: 600 10px/1 var(--mono); color: var(--accent); background: var(--accent-soft);
-          border-radius: 5px; padding: 3px 4px; text-decoration: none; }
+  /* Inline (not inline-block): the browser may break a line before an inline-block box, which left numbers alone
+     at the start of the next line; a plain inline element stays glued to the word it cites. */
+  sup.fn { line-height: 0; vertical-align: super; margin-left: 2px; white-space: nowrap; }
+  .cite { display: inline; font: 600 10px/1 var(--mono); color: var(--accent); background: var(--accent-soft);
+          border-radius: 5px; padding: 2px 4px; text-decoration: none;
+          -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  sup.fn + sup.fn { margin-left: 3px; }
   .cite:hover { text-decoration: none; filter: brightness(.95); }
   .removed { font-size: 12px; color: var(--err); background: var(--err-soft); border-radius: 6px; padding: 1px 6px; }
   .caret { display: inline-block; width: 7px; height: 1.05em; background: var(--accent); vertical-align: -2px;
@@ -168,8 +183,22 @@
   .actions .icon-btn { padding: 3px 6px; font-size: 12px; }
 
   /* Composer */
-  .composer { padding: 6px 16px 14px; background: linear-gradient(to top, var(--bg) 70%, transparent); }
+  .composer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; padding: 6px 16px 14px; }
   .composer-in { max-width: 820px; margin: 0 auto; position: relative; }
+  /* Progressive blur: stacked layers, each blurring more and covering a lower band, so messages dissolve
+     gradually behind the composer instead of being cut off; the last layer fades into the background colour. */
+  .fade { position: fixed; left: 0; right: 0; bottom: 0; height: calc(var(--comp-h) + 56px); z-index: 9;
+          pointer-events: none; }
+  .fade > div { position: absolute; inset: 0; }
+  .fade > div:nth-child(1) { backdrop-filter: blur(1px); -webkit-backdrop-filter: blur(1px);
+                             mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 40%, transparent 60%); }
+  .fade > div:nth-child(2) { backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+                             mask-image: linear-gradient(to bottom, transparent 20%, #000 40%, #000 60%, transparent 80%); }
+  .fade > div:nth-child(3) { backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+                             mask-image: linear-gradient(to bottom, transparent 40%, #000 60%, #000 80%, transparent 100%); }
+  .fade > div:nth-child(4) { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+                             mask-image: linear-gradient(to bottom, transparent 60%, #000 80%); }
+  .fade > div:nth-child(5) { background: linear-gradient(to bottom, transparent 30%, color-mix(in srgb, var(--bg) 92%, transparent) 75%); }
   .box { display: flex; align-items: flex-end; gap: 8px; background: var(--surface); border: 1px solid var(--border);
          border-radius: 18px; padding: 8px 8px 8px 16px; box-shadow: var(--shadow); transition: border-color .15s; }
   .box:focus-within { border-color: var(--accent); }
@@ -219,7 +248,8 @@
   <div id="log" aria-live="polite"></div>
 </div>
 
-<div class="composer">
+<div class="fade" aria-hidden="true"><div></div><div></div><div></div><div></div><div></div></div>
+<div class="composer" id="composer">
   <div class="composer-in">
     <button class="latest" id="latest" type="button">↓ Latest</button>
     <form class="box" id="form">
@@ -261,6 +291,18 @@ const ROBOT = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><
 const COPY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z"/></svg>';
 const CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.1717 12.0007L8.22192 7.05093L9.63614 5.63672L16.0001 12.0007L9.63614 18.3646L8.22192 16.9504L13.1717 12.0007Z"/></svg>';
 const PLACEHOLDER = q.placeholder;
+// Keep the floating bars' real heights in CSS variables (the composer grows with the text; the top bar on phones).
+{
+  const bars = [document.querySelector(".top"), $("composer")];
+  const measure = () => {
+    const root = document.documentElement.style;
+    root.setProperty("--top-h", bars[0].offsetHeight + "px");
+    root.setProperty("--comp-h", bars[1].offsetHeight + "px");
+  };
+  const ro = new ResizeObserver(measure);
+  bars.forEach((b) => ro.observe(b));
+  measure();
+}
 $("top-mark").innerHTML = ROBOT;
 const STATUS = {
   grounded: "Grounded in sources", check: "Check this answer", not_found: "Not in the knowledge base",
@@ -385,23 +427,52 @@ function inline(parent, text, refs) {
   parent.append(text.slice(last));
 }
 
+function attachCites(target, line, refs) {
+  // Look back over the end of the target: footnotes already there ("…dashboard [x]." then a line "[x]") aren't
+  // repeated, and new ones go before trailing punctuation ("dashboard¹ ²." rather than "dashboard¹. ²").
+  const trailing = new Set();
+  let insertBefore = null;
+  for (let n = target.lastChild; n; n = n.previousSibling) {
+    if (n.nodeType === Node.TEXT_NODE && /^[\s.,;:!?]*$/.test(n.textContent)) {
+      if (n.textContent.trim()) insertBefore = n;
+      continue;
+    }
+    if (n.nodeType === Node.ELEMENT_NODE && n.matches("sup.fn")) { trailing.add(n.firstChild.dataset.id); continue; }
+    break;
+  }
+  const ids = [...new Set([...line.matchAll(/\[([a-z0-9]+(?:-[a-z0-9]+)+)\]/g)].map((m) => m[1]))]
+    .filter((id) => !trailing.has(id));
+  if (!ids.length) return;
+  const tmp = el("span");
+  inline(tmp, ids.map((id) => `[${id}]`).join(""), refs);
+  target.insertBefore(tmp, insertBefore);  // insertBefore null = at the end
+  tmp.replaceWith(...tmp.childNodes);  // unwrap: the footnotes sit directly in the paragraph or list item
+}
+
 function renderAnswer(box, text, sources, live) {
   box.replaceChildren();
   // While streaming, number citations as they appear; once done, number them by the final source list.
   const refs = sources ? Object.assign([...sources], {final: true}) : [];
   const blocks = text.replace(/\r/g, "").trim().split(/\n\s*\n/);
   const kind = (l) => (/^\s*[-*•]\s+/.test(l) ? "ul" : /^\s*\d+[.)]\s+/.test(l) ? "ol" : "p");
+  // A line holding only citations ("[erp-first-login] [erp-first-login]", often written under a list) belongs to
+  // what came just before it: attach it there instead of making a paragraph of its own.
+  const citesOnly = /^\s*(\[[a-z0-9]+(?:-[a-z0-9]+)+\][\s.,;]*)+$/;
+  let lastTarget = null;  // the last paragraph or list item written
   for (const block of blocks) {
     // Consecutive lines of the same kind form one paragraph or one list ("intro:\n- a\n- b" = p + ul).
     let current = null, currentKind = null;
     for (const line of block.split("\n").filter((l) => l.trim())) {
+      if (lastTarget && citesOnly.test(line)) { attachCites(lastTarget, line, refs); continue; }
       const k = kind(line);
       if (k !== currentKind) { current = el(k); currentKind = k; box.append(current); }
       if (k === "p") {
         if (current.childNodes.length) current.append(el("br"));
         inline(current, line, refs);
+        lastTarget = current;
       } else {
         const li = el("li"); inline(li, line.replace(/^\s*([-*•]|\d+[.)])\s+/, ""), refs); current.append(li);
+        lastTarget = li;
       }
     }
   }
