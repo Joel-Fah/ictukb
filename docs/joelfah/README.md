@@ -10,15 +10,19 @@ Author: Joel-Fah. Work happens on the `local-chatbot` branch of our fork of
 
 ## Contents
 
+**Start here:** [journey.md](journey.md), the overview: process, challenges, trade-offs, lessons.
+
 | Page | What it covers | Status |
 |---|---|---|
+| [journey.md](journey.md) | The whole story in one page | updated each phase |
+| [failure-log.md](failure-log.md) | Every failure and hallucination observed: what, why, fix, status | updated each phase |
 | [00-inspection.md](00-inspection.md) | Phase 0: the laptop, the repo, and the three design choices | done |
 | [01-local-setup.md](01-local-setup.md) | Phase 1: the knowledge base running locally (database, embeddings, index, website crawl) | done |
-| [reports/](reports/) | Raw evaluation reports | |
-| [scripts/](scripts/) | Small measurement scripts (threshold sweep) | |
-| [issues/](issues/README.md) | Issues and pull requests we sent to the shared knowledge base | ongoing |
 | [02-chatbot.md](02-chatbot.md) | Phase 2: the terminal chatbot, how it answers, 4 rounds of testing and fixes | done |
-| 03-evaluation (to come) | Phase 3: measuring and tuning answers and speed | not started |
+| [03-evaluation.md](03-evaluation.md) | Phase 3: 5 evaluation runs, model and setting comparisons, weakest areas, measurement noise | done |
+| [issues/](issues/README.md) | Issues and pull requests we sent to the shared knowledge base | ongoing |
+| [reports/](reports/) | Raw transcripts and evaluation reports (Phases 1-2; Phase 3 reports are in `chatbot/reports/`) | |
+| [scripts/](scripts/) | Small measurement scripts (threshold sweep) | |
 
 ## The idea in one picture
 

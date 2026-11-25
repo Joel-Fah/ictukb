@@ -101,6 +101,12 @@ class Assistant:
 
         context, turn.context_passages = build_context(r.passages, self.cfg.max_chunk_chars, self.cfg.max_context_chars,
                                                        self.cfg.relative_cutoff)
+        if not turn.context_passages:
+            # Every relevant passage is an unfilled placeholder: nothing to answer from, so don't ask the model.
+            turn.answer = fallback_message(language, self.contacts, categories)
+            print(turn.answer, file=out)
+            turn.total_s = time.perf_counter() - started
+            return turn
         user = build_user_message(question, context, language)
         turn.used_llm = True
         pieces: list[str] = []

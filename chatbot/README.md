@@ -63,8 +63,12 @@ in [config.py](config.py):
 | `CHAT_MAX_CHUNK_CHARS` | 1200 | Each passage is cut to this length |
 | `CHAT_MAX_CONTEXT_CHARS` | 4000 | All passages together |
 | `CHAT_MIN_SIMILARITY` | (from `.env`) | Override the confidence threshold |
+| `CHAT_RELATIVE_CUTOFF` | 0.05 | Drop passages scoring this much below the best one |
 | `CHAT_NUM_CTX` | 4096 | Model context window (tokens) |
-| `CHAT_TEMPERATURE` | 0.1 | Low = factual, repeatable answers |
+| `CHAT_TEMPERATURE` | 0.1 | Low = factual answers |
+| `CHAT_REPEAT_PENALTY` | 1.05 | Qwen 2.5's default; 1.15 corrupted copied dates |
+| `CHAT_MAX_ANSWER_TOKENS` | 400 | Hard cap on answer length |
+| `CHAT_SEED` | 42 | Fixed sampling seed: the same question gets (almost) the same answer |
 | `CHAT_KEEP_ALIVE` | `30m` | How long Ollama keeps the model in memory between questions |
 | `FASTEMBED_CACHE_PATH` | `~/.cache/fastembed` | Where the e5 model is stored (fastembed's own default is `/tmp`) |
 
@@ -78,5 +82,8 @@ in [config.py](config.py):
 | `llm.py` | Streaming client for Ollama's `/api/chat` (uses `httpx`, already a repo dependency) |
 | `chat.py` | Terminal loop and the answer pipeline |
 | `tests/` | Unit tests that need neither the database nor the model: `python -m pytest chatbot/tests` |
+| `eval_generation.py` | Runs golden questions through the whole pipeline and writes a report + CSV for hand verdicts: `python -m chatbot.eval_generation --label <name> [--live]` |
+| `BENCHMARKS.md` | Hardware, method, before/after results, decisions, weakest categories |
+| `reports/` | Evaluation reports, CSVs with verdicts, live logs, machine state per run |
 
 No new dependencies: the chatbot uses only the standard library and packages the repo already declares.

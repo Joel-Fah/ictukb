@@ -1,0 +1,93 @@
+id,category,type,language,question,expected_docs,retrieved,expected_retrieved,confidence,best_similarity,used_llm,cited,expected_cited,refused,unverified,redacted,stopped,first_token_s,total_s,prompt_tokens,answer_tokens,answer_tok_per_s,answer,verdict,verdict_note
+ADM-01,admissions,procedural,en,How do I apply to ICT University?,admissions-how-to-apply web-apply-to-ictu,admissions-how-to-apply web-home-2 about-university-overview web-maters-degree-entry-requirements,True,high,0.907,True,admissions-how-to-apply web-maters-degree-entry-requirements,True,False,,,,27.3,51.5,1018,183,7.6,"To apply to ICT University, follow these steps:
+
+1. Complete the online application on the student portal: [admissions-how-to-apply].
+2. Provide the required documents for your level (see Bachelor and Masters requirements documents for details) and upload the receipt of the application fee if you are applying for a Masters program.
+3. For transfer and Top-Up students, submit their documents to the Department of Transcript and Verification at transcript.verification@ictuniversity.edu.cm.
+4. Have your application checked by the Deans of the faculties to evaluate which credits can be transferred.
+5. Finally, follow up with ""Check my application"" on the ERP login page using the reference number you received.
+
+[admissions-how-to-apply] provides detailed information about the application process and documents required. [web-maters-degree-entry-requirements] gives specific requirements for applying to Masters programs, including the application fee.",partial,[checked against sources by Claude; confirm] Steps sourced; the Deans' credit evaluation is for transfer/Top-Up only but reads as a step for everyone
+PRC-02,procedures,factual,en,What is the course registration deadline?,procedures-course-registration,procedures-course-registration procedures-course-registration announcements-current-files announcements-current-files,True,high,0.892,True,announcements-current-files procedures-course-registration,True,False,,,,26.2,32.8,1191,55,8.4,"The course registration deadline is Monday 23 November 2026 [announcements-current-files]. From that date, a penalty of 10,000 FCFA applies to any student who registers for courses after the deadline [procedures-course-registration].",correct,"[checked against sources by Claude; confirm] 23 Nov 2026 and 10,000 FCFA penalty as in procedures-course-registration"
+PRC-09,procedures,factual,en,"How long does a transcript take, and what does it cost?",procedures-transcript,procedures-transcript procedures-transcript procedures-transcript finance-refunds,True,high,0.862,True,procedures-transcript,True,False,,,,10.8,27.2,726,50,3.1,The processing time for a transcript is not specified in the provided sources [procedures-transcript]. The cost of a transcript is also not stated; it is added to My Fees when you request one through the ERP system [procedures-transcript].,correct,"[checked against sources by Claude; confirm] Says cost and time are not stated; fee, if any, added to My Fees"
+FIN-01,finance,factual,en,How much are tuition fees for the Bachelors program?,finance-fee-schedule,finance-fee-schedule finance-installments announcements-current-files admissions-fee,True,high,0.858,True,finance-fee-schedule admissions-fee,True,True,,,,34.2,42.4,833,62,7.6,"[finance-fee-schedule] does not specify the tuition for Bachelor programs. Therefore, I do not have that information and suggest contacting the university directly for accurate details. [admissions-fee] mentions a $50 application fee for Masters programs, but does not provide tuition fees for Bachelor programs.",refused,"[checked against sources by Claude; confirm] False refusal: fee schedule gives XAF 365,000 with the caveat that the level isn't specified; should have quoted it with the caveat"
+FIN-05,finance,list,en,What are the installment dates and amounts?,finance-installments,finance-installments finance-installments announcements-current-files about-academic-calendar,True,high,0.862,True,finance-installments announcements-current-files,True,False,,,,23.5,34.2,998,82,7.7,"The installment dates and amounts are as follows:
+
+- The first installment is due on 9 November 2026 (50% of the total tuition).
+- The second installment is due from 20 to 30 November 2026.
+- The third installment amount is XAF 73,000.
+
+[finance-installments] [announcements-current-files]",partial,"[checked against sources by Claude; confirm] 'first installment due on 9 November' distorts the fees-control date; omits 182,500/109,500; 20-30 Nov correct"
+FIN-06,finance,list,en,What payment methods are accepted?,finance-payment-channels,canteen-payment finance-payment-channels erp-fee-statement finance-payment-channels,True,high,0.835,True,finance-payment-channels,True,False,,,,13.1,18.0,720,39,8.1,[finance-payment-channels] does not document which payment methods the canteen accepts. Please refer to the sources provided for information on payment channels and proof of payment related to tuition fees.,wrong,[checked against sources by Claude; confirm] Answered about the canteen (canteen-payment ranked first); ignored tuition bank accounts and My Fees proof in finance-payment-channels
+ERP-02,erp,procedural,en,How do I log in to the ERP for the first time?,erp-first-login,erp-first-login erp-first-login erp-course-registration erp-first-login,True,high,0.914,True,erp-first-login,True,False,,,,14.7,28.3,757,103,7.6,"To log in to the ERP for the first time, follow these steps:
+
+1. Open the ERP address given by the university.
+2. In ""Email or Matricule"" type your ICTU email address or, as a student, your matricule.
+3. Type your password (the eye icon shows or hides it; a warning appears if Caps Lock is on).
+4. Click Sign in. You go straight to your own dashboard.
+
+[erp-first-login]
+
+Source: [erp-first-login]",correct,[checked against sources by Claude; confirm] Four steps match erp-first-login
+ERP-03,erp,procedural,en,I forgot my ERP password. What do I do?,erp-password-reset,erp-password-reset erp-password-reset erp-first-login erp-first-login,True,high,0.912,True,erp-password-reset,True,False,,,,0.4,13.5,833,98,7.5,"If you forgot your ERP password, you can reset it by following these steps:
+
+- [erp-password-reset] Click on the ""Forgot password?"" option on the login page.
+- Type your email or matricule into the provided field.
+- The system will send you an email with a secure link to choose a new password.
+- Follow the instructions in the email to set a new password.
+
+You should use at least 8 characters mixing letters and numbers. [erp-password-reset]",correct,"[checked against sources by Claude; confirm] Steps match; the 8-character rule is real but from erp-first-login, cited as erp-password-reset"
+TTB-03,timetables,factual,en,When are the exams?,timetables-exams,about-academic-regulations timetables-exams-files about-academic-regulations about-academic-regulations,True,high,0.859,True,timetables-exams-files,True,False,,,,11.3,24.0,661,99,7.8,"The exams are scheduled from Monday, 25 January to Wednesday, 3 February 2027, according to the official communique of 25 October 2026. [timetables-exams-files]
+
+For context, Continuous Assessment 1 is from 14 to 19 December 2026 and Continuous Assessment 2 is from 4 to 10 January 2027. [timetables-exams-files]",correct,"[checked against sources by Claude; confirm] 25 Jan-3 Feb 2027, CA1/CA2 dates exact"
+MHP-01,finance,multi-hop,en,I owe part of my fees and want a transcript. What do I need to do?,finance-clearance procedures-transcript,procedures-transcript procedures-transcript erp-fee-statement procedures-transcript,True,high,0.89,True,erp-fee-statement procedures-transcript,True,False,,,,9.1,21.7,781,96,7.7,"You need to pay your outstanding fees before you can get a transcript. Once your fees are settled, follow these steps:
+
+1. Go to the Transcript page of the ERP.
+2. Use Download/Print Transcript to get an official stamped transcript.
+3. Your fee statement on the ERP will show all your approved results grouped by semester with GPA and CGPA; credits transferred from another university appear at the top.
+
+[erp-fee-statement] [procedures-transcript]",partial,[checked against sources by Claude; confirm] Pay fees first: right. finance-clearance not retrieved; step 3 attributes transcript-page content to the fee statement
+MHP-02,procedures,multi-hop,en,"I failed a course. How do I resit, and what will it cost?",procedures-resits finance-fee-schedule,procedures-resits procedures-resits procedures-resits procedures-complaints,True,high,0.874,True,procedures-resits,True,False,,,,23.2,50.6,961,198,7.2,"To resit a failed course, you need to follow these steps:
+
+1. Check if your course is eligible for resit by paying the resit fee. The eligibility criteria are that the total mark of the course must be below 50 [procedures-resits].
+2. If your course is eligible, register for the resit in the ERP system. Open Resit Registration and pay the resit fee (the amount is shown in the ERP for each course; it is not stated in the manual) [procedures-resits].
+3. For a special resit, you need to request one by clicking Request on Resit Registration and add a note to the Dean. If the Dean agrees, the lecturer will score a fresh mark out of 100, capped at 79 [procedures-resits].
+
+The cost for the resit is not stated in the manual but can be found in the ERP system for each course. [procedures-resits]",correct,"[checked against sources by Claude; confirm] Eligibility, registration, special resit and 'cost shown in ERP, not stated' all sourced"
+MHP-03,admissions,multi-hop,en,I'm applying for the Masters. What are the requirements and the fees?,admissions-masters-requirements finance-fee-schedule,admissions-masters-requirements web-maters-degree-entry-requirements web-maters-degree-entry-requirements finance-fee-schedule,True,high,0.868,True,web-maters-degree-entry-requirements admissions-masters-requirements finance-fee-schedule,True,False,,,,24.5,59.3,995,240,6.9,"To apply for the Master's program at ICT University, you need to provide the following documents:
+
+- Complete our online application at the ICT University portal-sign-up [web-maters-degree-entry-requirements].
+- Certified Scanned copy of a Bachelor's degree or Licence/Maitrise/DEA and an official transcript in a related area from an accredited institution. [admissions-masters-requirements]
+- Scanned copy of identification documents (birth certificate, National ID card, Passport) [web-maters-degree-entry-requirements]
+- Three letters of recommendation [web-maters-degree-entry-requirements]
+- Statement of Purpose [web-maters-degree-entry-requirements]
+- Certified Scanned copy of the receipt of payment into the ICT-U bank account of $50 or 25,000 CFA (Non-refundable Application Fee) [admissions-masters-requirements]
+
+Regarding fees, the complete tuition is XAF 365,000 (Central African francs). However, the programme and level it applies to are not specified in the information collected so far; fees may differ between Bachelor, Masters, and PhD programs. [finance-fee-schedule]",correct,"[checked against sources by Claude; confirm] All six requirements and the 365,000 caveat match"
+VAR-01,procedures,variant,fr,Comment puis-je m'inscrire aux cours ?,procedures-course-registration,procedures-course-registration finance-scholarships transport-overview erp-course-registration,True,high,0.832,True,erp-course-registration procedures-course-registration,True,False,,,,16.3,53.4,781,247,6.7,"Pour vous inscrire aux cours, vous devez suivre ces étapes :
+
+1. Vérifiez que vous avez payé au moins 50% de la cotisation semestrielle. Sinon, consultez le document d'inscription sur l'ERP pour connaître votre situation [erp-course-registration].
+2. Une fois que vous avez payé au moins 50%, téléchargez une reçu de banque démontrant votre paiement et envoyez-le dans votre espace personnel des frais (My Fees) afin que la finance le vérifie.
+3. Une fois que votre paiement est validé, vous pouvez vous inscrire aux cours dans l'ERP de l'ICTU. Cliquez sur les cours de votre programme et cliquez sur ""Register Selected"".
+4. Votre coordinateur de programme approuvera votre inscription.
+5. Imprimez le formulaire d'inscription officiel.
+
+Veuillez présenter ce formulaire officiel à vos enseignants avant d'assister aux cours, et seuls les étudiants dont les noms figurent sur la liste des cours seront autorisés à y assister [procedures-course-registration].",correct,"[checked against sources by Claude; confirm] French; 50% rule, receipt in My Fees, Register Selected, coordinator, form for lecturers: all sourced"
+VAR-02,finance,variant,fr,Quels sont les frais de scolarité ?,finance-fee-schedule,finance-fee-schedule finance-scholarships finance-scholarships campus-directions,True,high,0.82,True,finance-fee-schedule finance-scholarships campus-directions,True,False,,,,9.2,19.8,692,73,6.9,"Les frais de scolarité sont de XAF 365,000 [finance-fee-schedule]. Les informations sur les bourses et les réductions sont non documentées à ce jour [finance-scholarships]. Les détails sur la façon de se rendre au campus sont également non documentés [campus-directions].",partial,"[checked against sources by Claude; confirm] French; gives XAF 365,000 without the caveat that the level isn't specified; irrelevant campus-directions mention"
+VAR-03,campus,variant,fr,Où se trouve le bureau des finances ?,campus-office-directory,about-contacts web-faculty-of-bms web-faculty-of-ict web-faculty-of-bms,False,low,0.779,False,,False,True,,,,,0.2,,,0.0,"Je n'ai pas cette information dans la base de connaissances de l'ICT University. Veuillez contacter directement l'université. Contacts officiels (document about-contacts, en anglais) :
+- The website header shows the telephone +237 678 76 40 37 and the email admin@ictuniversity.edu.cm. The ERP footer shows the Faculty of Information and Communication Technology, ICT University Yaounde, telephone +237 682 255 000.",refused,[checked against sources by Claude; confirm] Correct refusal: campus-office-directory does not exist in the knowledge base
+NEG-01,about,no-answer,en,What is the rector's personal phone number?,,about-contacts people-org-chart procedures-complaints procedures-complaints,,low,0.8,False,,,True,,,,,0.1,,,0.0,"I don't have that information in the ICT University knowledge base. Please contact the university directly. Official contacts (from the about-contacts document):
+- The website header shows the telephone +237 678 76 40 37 and the email admin@ictuniversity.edu.cm. The ERP footer shows the Faculty of Information and Communication Technology, ICT University Yaounde, telephone +237 682 255 000.",refused,"[checked against sources by Claude; confirm] Correct: below threshold, no model call"
+NEG-02,finance,no-answer,en,What is my current fee balance?,,erp-fee-statement erp-fee-statement finance-fee-notices finance-fee-schedule,,high,0.848,True,finance-fee-schedule,,True,,finance@ictuniversity.edu.cm,,0.4,5.8,841,37,6.9,I do not have that information. You can contact the Finance office at finance@ictuniversity.edu.cm to find out your current fee balance. [finance-fee-schedule],refused,[checked against sources by Claude; confirm] Correct refusal; invented finance@ address removed by the redactor before display
+NEG-03,programs,no-answer,en,What were last year's exam questions for a given course?,,people-course-lecturers-files people-course-lecturers-files people-course-lecturers-files people-course-lecturers-files,,low,0.805,False,,,True,,,,,0.2,,,0.0,"I don't have that information in the ICT University knowledge base. Please contact the university directly. Official contacts (from the about-contacts document):
+- The website header shows the telephone +237 678 76 40 37 and the email admin@ictuniversity.edu.cm. The ERP footer shows the Faculty of Information and Communication Technology, ICT University Yaounde, telephone +237 682 255 000.",refused,[checked against sources by Claude; confirm] Correct: below threshold
+NEG-04,procedures,no-answer,en,Will I pass my resit?,,procedures-resits procedures-resits procedures-resits procedures-resits,,high,0.833,True,procedures-resits,,False,,,,16.4,41.1,767,170,6.9,"To determine if you will pass your resit, we need to consider the following points from the sources:
+
+1. The resit is eligible for a course with a total below 50.
+2. For a normal resit, the resit score (out of 70) is added to your CA mark. The final total is capped at 79 (grade B+, 3.5 points).
+
+Given these points, if your current cumulative average (CA) plus the resit score is less than or equal to 79, you will pass your resit.
+
+However, without specific details about your current CA and the resit score, we cannot definitively say whether you will pass. You should check your CA and the resit score in the ERP system to determine your final result. [procedures-resits]",partial,"[checked against sources by Claude; confirm] Declines to predict, but states a false rule ('total plus resit <= 79 means you pass'); 79 is a cap"
+NEG-05,about,no-answer,en,What's the weather in Yaounde today?,,about-contacts about-contacts web-home-2 campus-location,,low,0.791,False,,,True,,,,,0.2,,,0.0,"I don't have that information in the ICT University knowledge base. Please contact the university directly. Official contacts (from the about-contacts document):
+- The website header shows the telephone +237 678 76 40 37 and the email admin@ictuniversity.edu.cm. The ERP footer shows the Faculty of Information and Communication Technology, ICT University Yaounde, telephone +237 682 255 000.",refused,[checked against sources by Claude; confirm] Correct: below threshold

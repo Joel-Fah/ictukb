@@ -71,6 +71,11 @@ def clean(text: str) -> str:
     return _LINK.sub(r"\1", text)
 
 
+def has_content(text: str) -> bool:
+    """False when a passage holds nothing but placeholders and punctuation."""
+    return bool(re.search(r"\w", text.replace(PLACEHOLDER, "")))
+
+
 def build_context(passages: list[Passage], max_chunk_chars: int, max_context_chars: int,
                   relative_cutoff: float = 1.0) -> tuple[str, list[Passage]]:
     """Format passages for the model, within the size limits. Returns the text and the passages actually used.
@@ -85,6 +90,10 @@ def build_context(passages: list[Passage], max_chunk_chars: int, max_context_cha
     for p in passages:
         if p.similarity < best - relative_cutoff:
             continue
+        if not has_content(p.text):
+            # A section that is only [[TO FILL]] carries no fact, but its heading can look like one: qwen2.5:1.5b
+            # answered "the canteen accepts cash and mobile money" from the heading "... (cash, mobile money, other)?".
+            continue
         body = truncate(clean(p.text), max_chunk_chars)
         status = "draft, not yet verified" if p.status != "verified" else "verified"
         block = (f'<source id="{p.doc_id}" title="{p.title}" section="{p.heading}" '
@@ -98,9 +107,12 @@ def build_context(passages: list[Passage], max_chunk_chars: int, max_context_cha
 
 
 def build_user_message(question: str, context: str, language: str) -> str:
+    # Four French runs invented a university name ("Université de Technologie d'Ichoua-Tchokwe", "Université
+    # Internationale des Technologies et des Communications", ...): the exact name is now given.
     names = ("" if language == "en" else
-             " Keep the names of the university, faculties, programmes, offices and documents in English, exactly as "
-             "written in the sources; do not translate or expand them.")
+             ' Call the university "ICT University", never a translated or expanded name. Keep the names of faculties, '
+             "programmes, offices and documents in English, exactly as written in the sources; do not translate or "
+             "expand them, and do not expand abbreviations such as ERP.")
     return (f"SOURCES:\n{context}\n\nQUESTION: {question}\n\n"
             f"Answer in {LANGUAGE_NAMES[language]}, using only the sources above, and cite source ids in square brackets."
             f"{names}")

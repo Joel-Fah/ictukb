@@ -1,0 +1,6 @@
+== before: 20:43 load average: 8.43, 8.96, 7.52
+Mem:            15Gi        12Gi       1.6Gi       1.1Gi       2.9Gi       2.8Gi
+Swap:          9.6Gi       8.0Gi       1.6Gi
+== after: 20:53 load average: 7.81, 8.83, 8.24
+Mem:            15Gi        10Gi       2.0Gi       860Mi       3.7Gi       4.5Gi
+Swap:          9.6Gi       6.2Gi       3.5Gi

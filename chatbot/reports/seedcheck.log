@@ -1,0 +1,74 @@
+Loading the embedding model and qwen2.5:3b …
+
+===== [1/2] ADM-01 (admissions, en): How do I apply to ICT University?
+[retrieval 130 ms, confidence=high, best=0.907, threshold=0.81, language=en]
+  0.907  admissions-how-to-apply  [How do I apply to ICT University?]
+  0.862  web-home-2  [The ICT University]
+  0.855  about-university-overview  [What is ICT University?]
+  0.862  web-maters-degree-entry-requirements  [NEW STUDENTS !]
+To apply to ICT University, follow these steps:
+
+1. Complete the online application on the student portal: [admissions-how-to-apply].
+2. Provide the required documents for your level (see Bachelor and Masters requirements documents for details).
+3. For transfer and Top-Up students, contact the Department of Transcript and Verification at transcript.verification@ictuniversity.edu.cm.
+4. Follow up with "Check my application" on the ERP login page using the reference number you received.
+5. Finance will verify the application fee to send the admission letter.
+
+[admissions-how-to-apply] [web-maters-degree-entry-requirements]
+
+Sources:
+  [admissions-how-to-apply] How to apply to ICT University (https://ictuniversity.org/bachelors-degree-entry-requirements/, verified 2026-11-18)
+  [web-maters-degree-entry-requirements] Master’s Degree Entry Requirements (https://ictuniversity.org/maters-degree-entry-requirements/, verified 2026-11-25)
+[first token 10.9 s, total 40.6 s, prompt 1018 tok at 96 tok/s, answer 129 tok at 4.3 tok/s]
+[1/2] ADM-01 41s refused=False cited=['admissions-how-to-apply', 'web-maters-degree-entry-requirements']
+
+===== [2/2] VAR-02 (finance, fr): Quels sont les frais de scolarité ?
+[retrieval 294 ms, confidence=high, best=0.820, threshold=0.81, language=fr]
+  0.820  finance-fee-schedule  [How much is the tuition?]
+  0.819  finance-scholarships  [How does a student apply and what is the deadline?] DRAFT
+  0.815  finance-scholarships  [Which scholarships or discounts exist and who qualifies?] DRAFT
+  0.811  campus-directions  [What are the usual fares or travel times?] DRAFT
+Les frais de scolarité à l'Université Internationale des Technologies et des Communications (ICT) sont de XAF 365,000 [finance-fee-schedule]. Les programmes et niveaux spécifiques ne sont pas documentés pour le moment.
+
+Sources:
+  [finance-fee-schedule] Fee schedule per program and level (content/finance/finance-fee-schedule.md, verified 2026-11-18)
+[first token 10.4 s, total 23.7 s, prompt 520 tok at 53 tok/s, answer 58 tok at 4.4 tok/s]
+[2/2] VAR-02 24s refused=False cited=['finance-fee-schedule']
+wrote /home/joelfah/Documents/GitHub/ictukb/chatbot/reports/generation-seedcheck-a.md
+Loading the embedding model and qwen2.5:3b …
+
+===== [1/2] ADM-01 (admissions, en): How do I apply to ICT University?
+[retrieval 202 ms, confidence=high, best=0.907, threshold=0.81, language=en]
+  0.907  admissions-how-to-apply  [How do I apply to ICT University?]
+  0.862  web-home-2  [The ICT University]
+  0.855  about-university-overview  [What is ICT University?]
+  0.862  web-maters-degree-entry-requirements  [NEW STUDENTS !]
+To apply to ICT University, follow these steps:
+
+1. Complete the online application on the student portal: [admissions-how-to-apply].
+2. Provide the required documents for your level (see Bachelor and Masters requirements documents for details).
+3. For transfer and Top-Up students, contact the Department of Transcript and Verification at transcript.verification@ictuniversity.edu.cm.
+4. Follow up with "Check my application" on the ERP login page using the reference number you received.
+5. Finance will verify the application fee once your application is complete.
+
+[admissions-how-to-apply] provides detailed instructions for applying, including where to find the online application and what documents are required. [web-maters-degree-entry-requirements] gives specific requirements for Masters degree applications, including the application process and documents needed.
+
+Sources:
+  [admissions-how-to-apply] How to apply to ICT University (https://ictuniversity.org/bachelors-degree-entry-requirements/, verified 2026-11-18)
+  [web-maters-degree-entry-requirements] Master’s Degree Entry Requirements (https://ictuniversity.org/maters-degree-entry-requirements/, verified 2026-11-25)
+[first token 40.8 s, total 80.8 s, prompt 1018 tok at 25 tok/s, answer 164 tok at 4.1 tok/s]
+[1/2] ADM-01 81s refused=False cited=['admissions-how-to-apply', 'web-maters-degree-entry-requirements']
+
+===== [2/2] VAR-02 (finance, fr): Quels sont les frais de scolarité ?
+[retrieval 350 ms, confidence=high, best=0.820, threshold=0.81, language=fr]
+  0.820  finance-fee-schedule  [How much is the tuition?]
+  0.819  finance-scholarships  [How does a student apply and what is the deadline?] DRAFT
+  0.815  finance-scholarships  [Which scholarships or discounts exist and who qualifies?] DRAFT
+  0.811  campus-directions  [What are the usual fares or travel times?] DRAFT
+Les frais de scolarité à l'Université Internationale des Technologies et des Communications (ICT University) sont de XAF 365,000 [finance-fee-schedule]. Les programmes et niveaux spécifiques ne sont pas documentés pour le moment.
+
+Sources:
+  [finance-fee-schedule] Fee schedule per program and level (content/finance/finance-fee-schedule.md, verified 2026-11-18)
+[first token 14.5 s, total 28.7 s, prompt 520 tok at 37 tok/s, answer 59 tok at 4.2 tok/s]
+[2/2] VAR-02 29s refused=False cited=['finance-fee-schedule']
+wrote /home/joelfah/Documents/GitHub/ictukb/chatbot/reports/generation-seedcheck-b.md

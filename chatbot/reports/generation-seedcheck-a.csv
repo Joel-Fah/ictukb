@@ -1,0 +1,11 @@
+id,category,type,language,question,expected_docs,retrieved,expected_retrieved,confidence,best_similarity,used_llm,cited,expected_cited,refused,unverified,redacted,stopped,first_token_s,total_s,prompt_tokens,answer_tokens,answer_tok_per_s,answer,verdict,verdict_note
+ADM-01,admissions,procedural,en,How do I apply to ICT University?,admissions-how-to-apply web-apply-to-ictu,admissions-how-to-apply web-home-2 about-university-overview web-maters-degree-entry-requirements,True,high,0.907,True,admissions-how-to-apply web-maters-degree-entry-requirements,True,False,,,,10.9,40.6,1018,129,4.3,"To apply to ICT University, follow these steps:
+
+1. Complete the online application on the student portal: [admissions-how-to-apply].
+2. Provide the required documents for your level (see Bachelor and Masters requirements documents for details).
+3. For transfer and Top-Up students, contact the Department of Transcript and Verification at transcript.verification@ictuniversity.edu.cm.
+4. Follow up with ""Check my application"" on the ERP login page using the reference number you received.
+5. Finance will verify the application fee to send the admission letter.
+
+[admissions-how-to-apply] [web-maters-degree-entry-requirements]",,
+VAR-02,finance,variant,fr,Quels sont les frais de scolarité ?,finance-fee-schedule,finance-fee-schedule finance-scholarships finance-scholarships campus-directions,True,high,0.82,True,finance-fee-schedule,True,False,,,,10.4,23.7,520,58,4.4,"Les frais de scolarité à l'Université Internationale des Technologies et des Communications (ICT) sont de XAF 365,000 [finance-fee-schedule]. Les programmes et niveaux spécifiques ne sont pas documentés pour le moment.",,

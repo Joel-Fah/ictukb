@@ -197,3 +197,17 @@ def test_redactor_holds_back_only_the_current_word():
     assert r.feed("Yes, you can pay in") == "Yes, you can pay "
     assert r.feed("stallments.") == ""
     assert r.flush() == "installments."
+
+
+def test_placeholder_only_passages_are_dropped():
+    # Generation eval, qwen2.5:1.5b, FIN-06: an answer invented from this heading of an unfilled section.
+    from chatbot.prompt import has_content
+
+    empty = passage("canteen-payment", text="[[TO FILL]]")
+    empty.heading = "Which payment methods does the canteen accept (cash, mobile money, other)?"
+    real = passage("finance-payment-channels", text="Tuition is paid into the official bank accounts.")
+    assert not has_content("[[TO FILL]]\n\n[[TO FILL]].") and has_content("Fee: [[TO FILL]] FCFA, paid at the bank.")
+    context, used = build_context([empty, real], 1000, 5000)
+    assert [p.doc_id for p in used] == ["finance-payment-channels"] and "cash, mobile money" not in context
+    _, used = build_context([empty], 1000, 5000)
+    assert used == []

@@ -54,6 +54,7 @@ class OllamaChat:
                 "num_ctx": self.cfg.num_ctx,
                 "repeat_penalty": self.cfg.repeat_penalty,
                 "num_predict": self.cfg.max_answer_tokens,
+                "seed": self.cfg.seed,
             },
         }
         self.last_stats = {}

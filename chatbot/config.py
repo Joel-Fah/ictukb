@@ -33,6 +33,7 @@ class Config:
     temperature: float  # CHAT_TEMPERATURE
     repeat_penalty: float  # CHAT_REPEAT_PENALTY: discourages the model from repeating itself
     max_answer_tokens: int  # CHAT_MAX_ANSWER_TOKENS: hard cap on answer length
+    seed: int  # CHAT_SEED: fixed sampling seed, so the same question and passages give the same answer
     keep_alive: str  # CHAT_KEEP_ALIVE: how long Ollama keeps the model loaded between questions
 
     @classmethod
@@ -49,5 +50,7 @@ class Config:
             temperature=_get("CHAT_TEMPERATURE", 0.1, float),
             repeat_penalty=_get("CHAT_REPEAT_PENALTY", 1.05, float),  # Qwen 2.5's own default; 1.15 corrupted dates
             max_answer_tokens=_get("CHAT_MAX_ANSWER_TOKENS", 400, int),
+            # Without a seed, 14 of 20 answers changed between two runs with identical passages (Phase 3).
+            seed=_get("CHAT_SEED", 42, int),
             keep_alive=_get("CHAT_KEEP_ALIVE", "30m"),
         )
