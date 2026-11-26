@@ -127,10 +127,34 @@ _REFUSALS = (
 )
 
 
+# "I don't have that information" is the model speaking about the whole question; "X is not provided in the sources"
+# can be about the whole question or about one detail of an otherwise complete answer.
+_FIRST_PERSON = tuple(p for p in _REFUSALS if p.startswith(("don't have", "do not have", "n'ai pas", "cannot answer")))
+_SENTENCE_END = re.compile(r"[.!?](?=\s)|\n")
+
+
+def refusal_kind(answer: str) -> str:
+    """How the answer relates to "I don't know": "refusal", "gap" or "".
+
+    refusal  the model says it doesn't know: a first-person refusal anywhere (seen with qwen2.5:3b: "[finance-fee-
+             schedule] does not specify ... Therefore, I do not have that information ..."), or an impersonal one
+             ("there is no specific information about ...") in the first sentence
+    gap      a real answer that notes a missing detail later on (seen with qwen2.5:7b: a complete installment answer
+             ending "the dates of the first and third installments are not provided in the sources"; failure 36)
+    """
+    lowered = answer.strip().lower().replace("’", "'")
+    if not any(phrase in lowered for phrase in _REFUSALS):
+        return ""
+    end = _SENTENCE_END.search(lowered)
+    first = lowered[:end.end()] if end else lowered
+    if any(phrase in lowered for phrase in _FIRST_PERSON) or any(phrase in first for phrase in _REFUSALS):
+        return "refusal"
+    return "gap"
+
+
 def is_refusal(answer: str) -> bool:
     """The model said it doesn't know (checked so the footer shows contacts, not sources)."""
-    lowered = answer.lower().replace("’", "'")
-    return any(phrase in lowered for phrase in _REFUSALS)
+    return refusal_kind(answer) == "refusal"
 
 
 def cited_ids(answer: str, passages: list[Passage]) -> list[str]:
@@ -245,14 +269,22 @@ FALLBACK = {
           "Veuillez contacter directement l'université. Contacts officiels (document about-contacts, en anglais) :",
 }
 
+GAP = {
+    "en": "Some details are not in the ICT University knowledge base; for those, contact the university. "
+          "Official contacts (from the about-contacts document):",
+    "fr": "Certains détails ne figurent pas dans la base de connaissances de l'ICT University ; pour ceux-là, "
+          "contactez l'université. Contacts officiels (document about-contacts, en anglais) :",
+}
+
 # Sections of about-contacts to show, by heading keyword. Admissions contacts are added for admissions questions.
 GENERAL_CONTACTS = "general phone number and email"
 ADMISSIONS_CONTACTS = "admissions office"
 
 
-def fallback_message(language: str, contacts: dict[str, str], categories: set[str]) -> str:
+def fallback_message(language: str, contacts: dict[str, str], categories: set[str], gap: bool = False) -> str:
+    """Official contacts, introduced as "I don't have that information" or, after a partial answer, "some details"."""
     wanted = [GENERAL_CONTACTS] + ([ADMISSIONS_CONTACTS] if "admissions" in categories else [])
-    lines = [FALLBACK[language]]
+    lines = [(GAP if gap else FALLBACK)[language]]
     for key in wanted:
         for heading, body in contacts.items():
             if key in heading.lower():

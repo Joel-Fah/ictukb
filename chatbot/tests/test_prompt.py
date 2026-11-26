@@ -171,6 +171,46 @@ def test_refusal_detection():
     assert not is_refusal("Yes, you can pay your fees in installments.")
 
 
+# Real answers from the evaluation runs (chatbot/reports/generation-*.csv).
+QWEN3B_FIN01 = ("[finance-fee-schedule] does not specify the tuition for Bachelor programs. Therefore, I do not have "
+                "that information and suggest contacting the university directly for accurate details.")
+QWEN7B_NEG04 = ("I do not have that information [procedures-resits]. The outcome depends on your performance during the "
+                "resit examination, which is scored out of 70 and added to your continuous assessment (CA) mark, with a "
+                "final total capped at 79 (grade B+, 3.5 points). For courses failed in an earlier semester, you may "
+                "request a special resit with the Dean's approval.")
+QWEN7B_FIN05 = ("Tuition is paid in three installments with the following amounts:\n"
+                "1. First installment: 50% of the total tuition, which is XAF 182,500.\n"
+                "2. Second installment: 30% of the total tuition, which is XAF 109,500.\n"
+                "3. Third installment: 20% of the total tuition, which is XAF 73,000.\n\n"
+                "The second installment payment period is from 20 to 30 November 2026 [finance-installments, "
+                "announcements-current-files, about-academic-calendar]. The specific dates for the first and third "
+                "installments are not provided in the sources.")
+
+
+def test_refusal_kind_separates_refusals_from_answers_with_a_gap():
+    from chatbot.prompt import is_refusal, refusal_kind
+
+    assert refusal_kind(QWEN3B_FIN01) == "refusal"  # "I do not have" in the second sentence
+    # The same refusal in the baseline run, followed by a further sentence (312 characters).
+    assert refusal_kind(QWEN3B_FIN01 + " [admissions-fee] mentions a $50 application fee for Masters programs, but does "
+                        "not provide tuition fees for Bachelor programs.") == "refusal"
+    assert refusal_kind(QWEN7B_NEG04) == "refusal"  # long, but says so first
+    # Failure 36: a complete answer that ends by naming one missing detail is an answer, not a refusal.
+    assert refusal_kind(QWEN7B_FIN05) == "gap" and not is_refusal(QWEN7B_FIN05)
+    french = ("Le deuxième versement est dû entre le 20 et le 30 novembre 2026 [finance-installments]. Il représente "
+              "30 % des frais de scolarité, soit XAF 109 500. La date du troisième versement ne figure pas dans les "
+              "sources.")
+    assert refusal_kind(french) == "gap"
+    assert refusal_kind("Yes, you can pay your fees in three installments [finance-installments].") == ""
+
+
+def test_gap_contacts_do_not_say_i_dont_know():
+    contacts = {"General phone number and email": "Phone +237 000; email info@example.cm"}
+    gap = fallback_message("en", contacts, set(), gap=True)
+    assert gap.startswith("Some details are not") and "don't have" not in gap and "info@example.cm" in gap
+    assert fallback_message("fr", contacts, set(), gap=True).startswith("Certains détails")
+
+
 def test_french_message_keeps_names_in_english():
     from chatbot.prompt import build_user_message
 

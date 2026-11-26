@@ -23,6 +23,7 @@ from .prompt import (
     detect_language,
     fallback_message,
     is_refusal,
+    refusal_kind,
     source_notes,
     unverified_facts,
 )
@@ -48,7 +49,7 @@ class Turn:
     redacted: list[str] = field(default_factory=list)  # emails/URLs the model wrote that the sources don't contain
     fallback: str = ""  # "" | "threshold" (best passage below MIN_SIMILARITY) | "placeholders" (only [[TO FILL]])
     sources_shown: list[str] = field(default_factory=list)  # ids listed under the answer (cited, or given if none cited)
-    contacts_text: str = ""  # official contacts shown after a refusal by the model
+    contacts_text: str = ""  # official contacts shown after a refusal, or after an answer with a gap
 
 
 REDACTED_NOTE = {
@@ -157,8 +158,9 @@ class Assistant:
                 print(f"  [{doc_id}] {p.title} ({p.source}, verified {p.last_verified})", file=footer)
             for note in source_notes(language, turn.context_passages, turn.sources_shown):
                 print(note, file=footer)
-            if is_refusal(turn.answer):
-                turn.contacts_text = fallback_message(language, self.contacts, categories)
+            kind = refusal_kind(turn.answer)  # a cited refusal, or an answer that says one detail is missing
+            if kind:
+                turn.contacts_text = fallback_message(language, self.contacts, categories, gap=kind == "gap")
                 print("\n" + turn.contacts_text, file=footer)
 
         turn.total_s = time.perf_counter() - started

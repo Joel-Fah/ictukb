@@ -90,6 +90,12 @@ def test_behaviour_states():
     # Seen live: a refusal that also invented an address; the removal must still be reported.
     status, reasons = behaviour(make_turn(answer="I do not have that information.", redacted=["finance@x.cm"]))
     assert status == "not_found" and any("removed" in r for r in reasons)
+    # Failure 36 (seen with qwen2.5:7b): a full answer that notes one missing detail is an answer to check, not "not found".
+    gap = ("Tuition is paid in three installments: 50%, 30% and 20% of the tuition, that is XAF 182,500, XAF 109,500 and "
+           "XAF 73,000 [finance-installments]. The second installment is paid from 20 to 30 November 2026. The dates of "
+           "the first and third installments are not provided in the sources.")
+    status, reasons = behaviour(make_turn(answer=gap))
+    assert status == "check" and any("some details are not in the sources" in r for r in reasons)
 
 
 def test_second_question_is_told_it_is_queued():

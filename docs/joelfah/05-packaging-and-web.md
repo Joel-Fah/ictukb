@@ -78,7 +78,7 @@ the text field. What was wrong, and what changed:
 | Badge | Meaning |
 |---|---|
 | green *Grounded in sources* | the model answered and cited sources; no check flagged anything |
-| amber *Check this answer* | something deserves a look, listed under "Worth checking": no citation, a number or date not found in the sources, a removed contact, a draft or outdated source, an answer stopped early |
+| amber *Check this answer* | something deserves a look, listed under "Worth checking": no citation, a number or date not found in the sources, a removed contact, a draft or outdated source, an answer stopped early, an answer that says some details are not in the sources (then with the official contacts; added after the 7B test, failure 36) |
 | slate *Not in the knowledge base* | below the similarity threshold (model not called), only unfilled drafts, or the model found no answer; the reason is shown |
 
 Each answer card also has: citation chips that jump to their source card; source cards with title, document id,

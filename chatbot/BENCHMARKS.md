@@ -55,7 +55,7 @@ differences between runs below about 30% as noise.
 \* Both models were loaded during this run (the 1.5b from the previous run had not been unloaded), so swap rose to 8 GB.
 
 † (FIN-05, qwen7b) The answer is complete, but our refusal detector matched its closing "not provided in the sources"
-and appended the contacts fallback; the automatic "refused" count includes it (failure 36).
+and appended the contacts fallback; the automatic "refused" count includes it (failure 36, since fixed).
 
 List questions behind failures 17 and 19, both models with the final settings on the same day: PRG-02 (Master's
 programmes) 3B partial (6 of 9) / 7B correct (9 of 9); ADM-02 (Bachelor documents) 3B partial / 7B correct

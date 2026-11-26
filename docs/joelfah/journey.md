@@ -93,7 +93,6 @@ These constraints shaped every choice below.
   `campus-office-directory`; French headings and golden questions.
 - **Unanswerable but on-topic questions** would benefit from an answer-verification step like upstream's Worker.
 - **More runs per configuration**, including a second `qwen2.5:7b` run to confirm its one-run lead.
-- **Failure 36**: the refusal detector mislabels answers that note one missing detail (seen with the 7B).
 - **Human confirmation** of the verdicts in `chatbot/reports/generation-*.csv`.
 
 Phase 3 details: [03-evaluation.md](03-evaluation.md) and [chatbot/BENCHMARKS.md](../../chatbot/BENCHMARKS.md).

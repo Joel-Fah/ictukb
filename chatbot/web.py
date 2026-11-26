@@ -62,10 +62,11 @@ def behaviour(turn) -> tuple[str, list[str]]:
     """How the answer was produced, as one of three states and the reasons behind it.
 
     grounded  the model answered and cited its sources; no check flagged anything
-    check     the model answered, but something deserves a look (listed in the reasons)
+    check     the model answered, but something deserves a look (listed in the reasons), including an answer
+              that says one detail is missing (a "gap": it is still an answer, not a refusal)
     not_found nothing to answer from: below the threshold, only unfilled drafts, or the model declined
     """
-    from .prompt import is_refusal
+    from .prompt import is_refusal, refusal_kind
 
     if turn.fallback == "threshold":
         return "not_found", [f"best passage {turn.retrieval.best_similarity:.2f} is below the "
@@ -85,6 +86,8 @@ def behaviour(turn) -> tuple[str, list[str]]:
         reasons.append(f"not found in the sources: {', '.join(turn.unverified)}")
     if turn.redacted:
         reasons.append(f"{len(turn.redacted)} contact detail(s) not in the sources were removed")
+    if refusal_kind(turn.answer) == "gap":
+        reasons.append("the answer says some details are not in the sources; official contacts are shown for those")
     if turn.stopped:
         reasons.append("answer stopped: " + ("repetition" if turn.stopped == "loop" else "length limit"))
     if any(by_id[d].status != "verified" for d in turn.sources_shown if d in by_id):

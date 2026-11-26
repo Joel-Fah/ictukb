@@ -152,7 +152,7 @@ reading-comprehension errors, which larger models generally make less often.
   third installments are not provided in the sources". Our refusal detector looks for phrases like "not provided in"
   anywhere in the answer, so it treated a correct, cited answer as a refusal: the "I don't have that information"
   contacts block was appended, the run counted it as refused, and the web page would have shown *Not in the knowledge
-  base*. In all earlier runs, every cited answer that matched a refusal phrase really was a refusal (3B: FIN-01 and
+  base*. (Now fixed: such answers are labelled a *gap* and stay answers.) In all earlier runs, every cited answer that matched a refusal phrase really was a refusal (3B: FIN-01 and
   NEG-02); FIN-05 is the first complete answer to match, which is why this didn't show before.
 
 **Why (likely):** more parameters give more room to represent "this fact applies only when..." while keeping the rules,
@@ -182,7 +182,7 @@ noise we measured, but a second 7B run would make it solid.
 **Decision (proposed, by the rule set before the test):** it fixes the finance and list errors and invented nothing
 new, so it becomes an **optional quality mode**: `CHAT_MODEL=qwen2.5:7b ./chatbot/run.sh [--web]`, with browsers
 closed. The 3B stays the default: twice the wait and twice the memory are too much for everyday use on this laptop.
-Before offering it, fix failure 36 (otherwise the web page mislabels its best answers).
+Failure 36, which would have mislabelled its best answers on the web page, is fixed.
 
 ---
 
