@@ -26,7 +26,10 @@ differences between runs below about 30% as noise.
   categories, 3 multi-hop, the 3 French variants, the 5 no-answer questions. Report, CSV and log in [reports/](reports/).
 - **Verdicts** (in each CSV): *correct* (all facts match the source), *partial* (facts right but incomplete, or a
   condition dropped, or a minor unsupported detail), *wrong* (a wrong or invented fact, or a different topic),
-  *refused*. Checked by Claude against the source files; marked "confirm" for a human check.
+  *refused*. Checked by Claude against the source files. **Confirmed by a human** (Joel, 2026-11-26) for the runs the
+  conclusions rest on: `final` (3B), `qwen7b` and the two list runs, 36 model answers, reviewed side by side with their
+  passages in [verdict-review.md](../docs/joelfah/verdict-review.md). The older runs (baseline, qwen1.5b, v2, topk3)
+  are still marked "confirm".
 - **Variance:** without a fixed seed, 14 of 20 answers changed between two runs with identical passages. A
   difference of 1-2 answers between configurations is within noise. With `CHAT_SEED` set, answers match for most of
   their length but can still diverge near the end (prompt-cache reuse and multi-threaded arithmetic).

@@ -22,7 +22,7 @@ verdict: `chatbot/reports/generation-<run>.csv`.
    categories, 3 multi-hop questions (needing two documents), the 3 French questions, and the 5 the knowledge base
    can't answer. For each, it records the answer, retrieved and cited documents, refusals, flagged facts and timings.
 3. **Verdicts by hand**: every answer read against every passage the model was given, then marked *correct*,
-   *partial*, *wrong* or *refused*, with a note (in the CSV, marked for a human to confirm). The automatic columns
+   *partial*, *wrong* or *refused*, with a note (in the CSV; the final 3B and 7B runs were later confirmed by Joel in [verdict-review.md](verdict-review.md), the older runs are still marked "confirm"). The automatic columns
    ("expected document cited") turned out to be poor proxies: an answer can cite the right document and still state
    the wrong date.
 4. **One change at a time**, each run logged with the machine's memory and load. With `--live`, the run can be
