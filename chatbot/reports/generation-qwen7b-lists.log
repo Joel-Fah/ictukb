@@ -1,0 +1,4 @@
+Loading the embedding model and qwen2.5:7b …
+[1/2] PRG-02 93s refused=False cited=['programs-masters', 'web-masters-programs']
+[2/2] ADM-02 55s refused=False cited=['admissions-bachelor-requirements']
+wrote /home/joelfah/Documents/GitHub/ictukb/chatbot/reports/generation-qwen7b-lists.md

@@ -1,0 +1,19 @@
+id,category,type,language,question,expected_docs,retrieved,expected_retrieved,confidence,best_similarity,used_llm,cited,expected_cited,refused,unverified,redacted,stopped,first_token_s,total_s,prompt_tokens,answer_tokens,answer_tok_per_s,answer,verdict,verdict_note
+PRG-02,programs,list,en,Which Masters programs are offered?,programs-masters web-masters-programs,programs-masters web-masters-programs web-masters-programs web-masters-programs,True,high,0.856,True,programs-masters web-masters-programs,True,False,,,,60.8,93.2,725,106,3.3,"The following Masters programs are offered:
+
+1. Applied Statistics and Demography
+2. Development Planning
+3. iMBA (iMBA)
+4. Artificial Intelligence
+5. Applied ICTs in Education
+6. Applied ICT in Public Health
+7. Information Systems Security
+8. Information Technology
+9. Information Systems and Networking
+10. BMS Master's programs (Applied Statistics and Demography, Development Planning, iMBA)
+
+Sources: [programs-masters], [web-masters-programs]",correct,"[checked against sources by Claude; confirm] All 9 Masters (6 ICT + 3 BMS); a redundant 10th line repeats the BMS group, ""iMBA (iMBA)"", and the model wrote its own ""Sources:"" line (cosmetic)"
+ADM-02,admissions,list,en,What documents do I need for a Bachelors application?,admissions-bachelor-requirements web-bachelors-degree-entry-requirements,admissions-bachelor-requirements admissions-masters-requirements admissions-bachelor-requirements admissions-fee,True,high,0.901,True,admissions-bachelor-requirements,True,False,,,,24.9,54.8,647,98,3.3,"To complete an application for a Bachelor's degree, you need to provide the following documents:
+- A certified copy of the birth certificate
+- Certified copies of the GCE ""O"" Level certificate, GCE ""A"" Level certificate, Probatoire, and Baccalaureate
+- Authenticated copies of the GCE ""O"" Level certificate, GCE ""A"" Level certificate, Probatoire, and Baccalaureate [admissions-bachelor-requirements].",correct,"[checked against sources by Claude; confirm] New-student documents verbatim (certified and authenticated copies); the Top-Up HND addition, in a separate section, not mentioned"

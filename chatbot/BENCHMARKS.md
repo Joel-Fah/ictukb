@@ -8,7 +8,7 @@ against its source documents. The story behind these numbers: [docs/joelfah/03-e
 | Item | Value |
 |---|---|
 | CPU | Intel Core i7-10710U, 6 cores / 12 threads, AVX2, no GPU used |
-| RAM | 15 GiB; during the runs 2.8-6.1 GiB available and 5.2-8.0 GiB of swap in use (browsers and VS Code open) |
+| RAM | 15 GiB; during the 3B/1.5b runs 2.8-6.1 GiB available and 5.2-8.0 GiB of swap in use (browsers and VS Code open); the 7B run after a reboot with browsers closed: 3.4-10 GiB available, no swap |
 | OS | Zorin OS 18.1 (Ubuntu 24.04 base) |
 | Ollama | 0.40.18 |
 | Embeddings | `intfloat/multilingual-e5-large` (fastembed 0.9.1, ONNX Runtime 1.32.0), 1024 dimensions |
@@ -50,31 +50,40 @@ differences between runs below about 30% as noise.
 | baseline-v2 | 3B + drop placeholder-only passages | 8 / 5 / 0 / 2 | 4 refused, 1 partial | 3 minor (French: name, ERP expansion, "par la poste") | 20.5 s* | 38.0 s* | 5.3 tok/s* |
 | topk3 | top-k 4 → 3 | 7 / 3 / 3 / 2 | 4 refused, 1 grounded redirect | 1 (French name) | 4.5 s** | 36.1 s | 4.5 tok/s |
 | **final** | v2 + seed 42 + exact-name rule for French | **8 / 4 / 1 / 2** | 4 refused, 1 partial | 1 unsupported claim (1 email removed) | 10.8 s | 34.8 s | 4.5 tok/s |
+| qwen7b | final settings, model → qwen2.5:7b (browsers closed, no swap) | **13 / 1 / 0 / 1** | 4 refused, 1 grounded redirect | 0 | 36.1 s | 62.3 s | 3.3 tok/s |
 
 \* Both models were loaded during this run (the 1.5b from the previous run had not been unloaded), so swap rose to 8 GB.
+
+† (FIN-05, qwen7b) The answer is complete, but our refusal detector matched its closing "not provided in the sources"
+and appended the contacts fallback; the automatic "refused" count includes it (failure 36).
+
+List questions behind failures 17 and 19, both models with the final settings on the same day: PRG-02 (Master's
+programmes) 3B partial (6 of 9) / 7B correct (9 of 9); ADM-02 (Bachelor documents) 3B partial / 7B correct
+([3B](reports/generation-qwen3b-lists.csv), [7B](reports/generation-qwen7b-lists.csv)).
+
 \** Mostly Ollama's prompt cache: the median prompt only shrank from 807 to 686 tokens, but many prompts were read at
 200-3000 tokens/s.
 
 Per-question verdicts across runs:
 
-| Id | Type | baseline | qwen1.5b | v2 | topk3 | final |
-|---|---|---|---|---|---|---|
-| ADM-01 | admissions | partial | correct | partial | correct | correct |
-| PRC-02 | procedures | correct | correct | correct | wrong | correct |
-| PRC-09 | procedures | correct | wrong | correct | correct | partial |
-| FIN-01 | finance | refused | wrong | refused | wrong | refused |
-| FIN-05 | finance | partial | correct | partial | partial | partial |
-| FIN-06 | finance | wrong | wrong | correct | refused | correct |
-| ERP-02 | erp | correct | correct | correct | correct | correct |
-| ERP-03 | erp | correct | partial | correct | correct | partial |
-| TTB-03 | timetables | correct | correct | correct | correct | correct |
-| MHP-01 | multi-hop | partial | partial | partial | correct | partial |
-| MHP-02 | multi-hop | correct | correct | correct | wrong | wrong |
-| MHP-03 | multi-hop | correct | correct | correct | partial | correct |
-| VAR-01 | French | correct | correct | partial | correct | correct |
-| VAR-02 | French | partial | correct | partial | partial | correct |
-| VAR-03 | French | refused | refused | refused | refused | refused |
-| NEG-01..05 | no-answer | 4 refused + NEG-04 partial | 3 refused, NEG-02 redirect, NEG-04 wrong | 4 refused + partial | 4 refused + redirect | 4 refused + NEG-04 partial |
+| Id | Type | baseline | qwen1.5b | v2 | topk3 | final | qwen7b |
+|---|---|---|---|---|---|---|---|
+| ADM-01 | admissions | partial | correct | partial | correct | correct | correct |
+| PRC-02 | procedures | correct | correct | correct | wrong | correct | correct |
+| PRC-09 | procedures | correct | wrong | correct | correct | partial | correct |
+| FIN-01 | finance | refused | wrong | refused | wrong | refused | **correct** |
+| FIN-05 | finance | partial | correct | partial | partial | partial | correct† |
+| FIN-06 | finance | wrong | wrong | correct | refused | correct | correct |
+| ERP-02 | erp | correct | correct | correct | correct | correct | correct |
+| ERP-03 | erp | correct | partial | correct | correct | partial | correct |
+| TTB-03 | timetables | correct | correct | correct | correct | correct | correct |
+| MHP-01 | multi-hop | partial | partial | partial | correct | partial | correct |
+| MHP-02 | multi-hop | correct | correct | correct | wrong | wrong | **correct** |
+| MHP-03 | multi-hop | correct | correct | correct | partial | correct | partial |
+| VAR-01 | French | correct | correct | partial | correct | correct | correct |
+| VAR-02 | French | partial | correct | partial | partial | correct | correct |
+| VAR-03 | French | refused | refused | refused | refused | refused | refused |
+| NEG-01..05 | no-answer | 4 refused + NEG-04 partial | 3 refused, NEG-02 redirect, NEG-04 wrong | 4 refused + partial | 4 refused + redirect | 4 refused + NEG-04 partial | 4 refused (NEG-04 ideal) + NEG-02 redirect |
 
 ## Decisions
 
@@ -85,7 +94,7 @@ Per-question verdicts across runs:
 | Placeholder-only passages | dropped | kept | their headings were mistaken for answers |
 | Seed | 42 | none | consistent answers for students; fairer comparisons |
 | Repeat penalty | 1.05 | 1.15 | 1.15 corrupted copied dates (Phase 2) |
-| `qwen2.5:7b` | not tested | - | needs about 2.5 GB more RAM; with 5-8 GB already in swap it would mostly measure swapping |
+| `qwen2.5:7b` | optional (`CHAT_MODEL=qwen2.5:7b`), proposed | as default | 13/15 correct vs 8/15, no invented facts, fixed the recurring finance and list errors; but 1.8x slower answers, 3.3x slower first words, 5.1 GB in Ollama (browsers must be closed). One run: see [models.md](../docs/joelfah/models.md) |
 
 ## Weakest categories
 

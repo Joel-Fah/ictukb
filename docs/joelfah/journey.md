@@ -38,7 +38,7 @@ These constraints shaped every choice below.
    come from the model reading the passages, which a 3B model mostly, but not always, does.
 3. **A small model hallucinates in specific, predictable places**: contact details when it redirects the
    student, dates when its decoding settings are off, names and abbreviations when it translates or explains,
-   and gaps it fills when a section is empty. See the [failure log](failure-log.md): 35 entries, 10 of them invented
+   and gaps it fills when a section is empty. See the [failure log](failure-log.md): 36 entries, 10 of them invented
    facts (5 from the 1.5b model alone in one run).
 4. **Speed on a CPU.** Reading a 650-850-token prompt takes most of the time: first words after about 17 s, a full
    answer in about 34 s. Memory pressure (swap) makes it worse and variable.
@@ -58,7 +58,7 @@ These constraints shaped every choice below.
 | Decision | We gained | We gave up |
 |---|---|---|
 | Local only (e5 + Ollama) | Privacy, no cost, works offline | Speed (34 s answers) and quality of a 3B model vs cloud models |
-| `qwen2.5:3b` instead of 7B | Fits next to e5 in the free RAM; about 5-6 tokens/s | Some completeness and instruction-following (incomplete lists, over-generalised advice) |
+| `qwen2.5:3b` instead of 7B as the default | Fits next to e5 with the browsers open; answers in about 35 s | Measured later: the 7B got 13/15 right against 8/15 and fixed the dropped-caveat and incomplete-list errors, but takes about 62 s and needs the browsers closed ([models.md](models.md)) |
 | Similarity threshold 0.81 | Off-topic questions refused instantly, without the model | 2 of 5 unanswerable questions pass; relies on the model to refuse them |
 | Checks in code (redaction, number check, loop guard) | Guarantees that don't depend on the model obeying | More code to maintain; the number check can flag a correct number written differently |
 | Drop passages far below the best one | Less padding, shorter prompts, faster | A relevant passage that scores low is lost |
@@ -92,7 +92,8 @@ These constraints shaped every choice below.
 - **Content** (Phase 4): the weak finance and multi-hop answers point at concrete content fixes; the missing
   `campus-office-directory`; French headings and golden questions.
 - **Unanswerable but on-topic questions** would benefit from an answer-verification step like upstream's Worker.
-- **More runs per configuration** and a test of `qwen2.5:7b` on a machine with free memory.
+- **More runs per configuration**, including a second `qwen2.5:7b` run to confirm its one-run lead.
+- **Failure 36**: the refusal detector mislabels answers that note one missing detail (seen with the 7B).
 - **Human confirmation** of the verdicts in `chatbot/reports/generation-*.csv`.
 
 Phase 3 details: [03-evaluation.md](03-evaluation.md) and [chatbot/BENCHMARKS.md](../../chatbot/BENCHMARKS.md).

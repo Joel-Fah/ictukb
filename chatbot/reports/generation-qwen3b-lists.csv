@@ -1,0 +1,18 @@
+id,category,type,language,question,expected_docs,retrieved,expected_retrieved,confidence,best_similarity,used_llm,cited,expected_cited,refused,unverified,redacted,stopped,first_token_s,total_s,prompt_tokens,answer_tokens,answer_tok_per_s,answer,verdict,verdict_note
+PRG-02,programs,list,en,Which Masters programs are offered?,programs-masters web-masters-programs,programs-masters web-masters-programs web-masters-programs web-masters-programs,True,high,0.856,True,programs-masters,True,False,,,,27.0,34.1,725,49,6.9,"The following Masters programs are offered at ICT University:
+
+- Artificial Intelligence
+- Applied ICTs in Education
+- Applied ICT in Public Health
+- Information Systems Security
+- Information Technology
+- Information Systems and Networking
+
+[programs-masters]",partial,"[checked against sources by Claude; confirm] 6 ICT Masters, the 3 BMS Masters missing (failure 17 reproduced with current settings)"
+ADM-02,admissions,list,en,What documents do I need for a Bachelors application?,admissions-bachelor-requirements web-bachelors-degree-entry-requirements,admissions-bachelor-requirements admissions-masters-requirements admissions-bachelor-requirements admissions-fee,True,high,0.901,True,admissions-bachelor-requirements,True,False,,,,11.0,25.8,647,101,6.9,"For a Bachelor's application at ICT University, you need the following documents:
+
+- Certified copy of the birth certificate
+- Certified copies of the GCE ""O"" Level certificate, GCE ""A"" Level certificate, Probatoire, and Baccalaureate
+- Certified copy of the HND diploma (if applying as a Top-Up student)
+
+These documents are required for both new students and Top-Up students. [admissions-bachelor-requirements] [admissions-bachelor-requirements]",partial,"[checked against sources by Claude; confirm] HND correctly conditioned on Top-Up, then contradicts it (""required for both new students and Top-Up students""); ""authenticated copies"" dropped"

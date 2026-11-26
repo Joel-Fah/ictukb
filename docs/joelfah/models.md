@@ -14,16 +14,16 @@ through Ollama 0.40.18 at temperature 0.1, 4096-token context, 4 passages per qu
 | | `qwen2.5:1.5b` | `qwen2.5:3b` (in use) | `qwen2.5:7b` |
 |---|---|---|---|
 | Parameters / quantisation | 1.5B, Q4_K_M | 3.1B, Q4_K_M | 7.6B, Q4_K_M |
-| Download | 986 MB | 1.9 GB | about 4.7 GB |
-| RAM in Ollama (4096-token context) | 1.17 GB (measured) | 2.17 GB (measured) | to measure |
-| Runs evaluated | 1 (20 questions) | 4 Phase 3 runs (80 answers) + 4 Phase 2 rounds (12 questions) | pending |
-| Answerable, of 15: correct / partial / wrong / refused | 9 / 2 / 3 / 1 | 8 / 4 / 1 / 2 (final run) | pending |
-| No-answer questions, of 5 | 3 refused, 1 grounded redirect, 1 wrong | 4 refused, 1 partial (final run) | pending |
-| Invented facts shown to the student | **5** in one run | 0-1 per run (contacts always removed by code) | pending |
-| Cited the expected document | **1/15** | 14/15 | pending |
-| Median first words / full answer | 17.1 s / 33.0 s (CPU busier during this run) | 10.8 s / 34.8 s (final); 15.5 s / 30.5 s (baseline) | estimate: ~40-50 s / ~1.5-2 min |
-| Writing speed | 6.5 tokens/s | 4.5-7.5 tokens/s depending on load | estimate: ~2-2.5 tokens/s |
-| Verdict | **Rejected** | **Kept** (default) | **Testing** |
+| Download | 986 MB | 1.9 GB | 4.7 GB |
+| RAM in Ollama (4096-token context) | 1.17 GB (measured) | 2.17 GB (measured) | 5.1 GB (measured; 5.4 GB peak resident) |
+| Runs evaluated | 1 (20 questions) | 4 Phase 3 runs (80 answers) + 4 Phase 2 rounds (12 questions) | 1 (20 questions) + 2 list questions |
+| Answerable, of 15: correct / partial / wrong / refused | 9 / 2 / 3 / 1 | 8 / 4 / 1 / 2 (final run) | **13 / 1 / 0 / 1** |
+| No-answer questions, of 5 | 3 refused, 1 grounded redirect, 1 wrong | 4 refused, 1 partial (final run) | 4 refused, 1 grounded redirect |
+| Invented facts shown to the student | **5** in one run | 0-1 per run (contacts always removed by code) | **0** (and no contact invented, so nothing to remove) |
+| Cited the expected document | **1/15** | 14/15 | 14/15 |
+| Median first words / full answer | 17.1 s / 33.0 s (CPU busier during this run) | 10.8 s / 34.8 s (final); 15.5 s / 30.5 s (baseline) | **36.1 s / 62.3 s** (browsers closed, no swap) |
+| Writing speed | 6.5 tokens/s | 4.5-7.5 tokens/s depending on load | 3.2-3.4 tokens/s |
+| Verdict | **Rejected** | **Kept** (default) | **Optional quality mode** (proposed) |
 
 Timings vary with memory pressure and Ollama's prompt cache (see [03-evaluation.md](03-evaluation.md), lesson 2):
 compare models on quality first, and only on large timing differences.
@@ -111,23 +111,78 @@ invented kind (contacts) is caught by code. The remaining errors need a careful 
 
 ---
 
-## `qwen2.5:7b`: pending
+## `qwen2.5:7b`: reads conditions, but slow
+
+**Runs:** `generation-qwen7b` (the 20 questions, [report](../../chatbot/reports/generation-qwen7b.md),
+[verdicts](../../chatbot/reports/generation-qwen7b.csv)), and the two list questions behind failures 17 and 19
+(PRG-02, ADM-02) on both the 7B and the 3B with today's settings (`generation-qwen7b-lists`, `-qwen3b-lists`).
+2026-11-26, after a reboot, browsers closed: 10 GB free at the start, 3.4 GB at the lowest, **swap never used**
+(sampled every 2 s, [memory.csv](../../chatbot/reports/generation-qwen7b.memory.csv),
+[machine state](../../chatbot/reports/generation-qwen7b.machine.txt)).
 
 **Why test it:** the 3B's remaining errors (dropped conditions, incomplete lists, blended cases, French names) are
-reading-comprehension errors, which larger models generally make less often. Whether it does on our questions is
-unknown until measured.
+reading-comprehension errors, which larger models generally make less often.
 
-**What to expect (estimates, not measurements):** about 5-5.5 GB in Ollama, so about 7-7.5 GB for the whole chatbot:
-more than the 5.7 GB free with browsers open, so browsers must be closed during the run. On a CPU, writing speed is
-limited mostly by reading the model's weights from memory; at about 2.5x the 3B's size, expect about 2-2.5 tokens/s,
-first words after about 40-50 s, a full answer in about 1.5-2 minutes.
+**Strengths**
+- **Keeps conditions and caveats**, the 3B's most common error:
+  "365,000 ... the amount for the Bachelor's is not specified" (FIN-01, failed in all four 3B runs), the same caveat
+  in French (VAR-02), the transfer/Top-Up step kept as such (ADM-01, 3B failure 19).
+- **Keeps cases apart**: resit registration with "the fee is shown in the ERP for each course", without the
+  special-resit "out of 100" rule the 3B mixed in (MHP-02, failure 29); the latest registration deadline, not a
+  superseded one (PRC-02).
+- **Complete lists**: all three installment amounts plus "the other dates are not published" (FIN-05); all 9 Master's
+  programmes where the 3B, asked again the same day, still gave 6 (PRG-02, failure 17).
+- **Says exactly what's missing** instead of filling the gap: "the processing time is not stated in the ERP
+  manual" (PRC-09), "the cost is not explicitly stated but can be found in the ERP" (MHP-02).
+- **No invented facts, names or contacts** in 22 answers: it never produced the `finance@` address the 3B invented in
+  most NEG-02 runs; the university's name stayed "ICT University" in French; no expanded "ERP".
+- "Will I pass my resit?" (NEG-04): says it doesn't know, then explains accurately what the result depends on. The
+  best answer to that question in any run.
 
-**Plan:** the same 20 golden questions (`CHAT_MODEL=qwen2.5:7b python -m chatbot.eval_generation --label qwen7b --live`)
-with browsers closed, memory and swap sampled every 2 s, every answer checked against its sources. Decision rule: if
-it fixes the finance and list errors without inventing anything new, offer it as an optional "quality mode"
-(`CHAT_MODEL=qwen2.5:7b`) with the 3B staying the default; if it is barely better, the 3B stays alone.
+**How it fails**
+- **One caveat still dropped**: for a Master's applicant, "the complete tuition is XAF 365,000" without "the level
+  isn't specified" (MHP-03), the same error type as failure 30, but in 1 of 15 answers instead of most finance ones.
+- Cites less completely in a two-document answer: the Master's requirements in MHP-03 were copied verbatim but not
+  cited (only the fee document was).
+- Treats "What is my current fee balance?" as "where do I see it" (My Fees in the ERP, verbatim from the source), like
+  the 1.5b: grounded, but not the refusal the golden set expects (NEG-02).
+- Cosmetic: a list item repeated as a group ("BMS Master's programs (...)"), "iMBA (iMBA)", its own "Sources:" line
+  above ours (PRG-02); "formulaire de registration" (anglicised French, VAR-01).
+- **It exposed a bug in our code (failure 36):** it ends complete answers with an honest "the dates of the first and
+  third installments are not provided in the sources". Our refusal detector looks for phrases like "not provided in"
+  anywhere in the answer, so it treated a correct, cited answer as a refusal: the "I don't have that information"
+  contacts block was appended, the run counted it as refused, and the web page would have shown *Not in the knowledge
+  base*. In all earlier runs, every cited answer that matched a refusal phrase really was a refusal (3B: FIN-01 and
+  NEG-02); FIN-05 is the first complete answer to match, which is why this didn't show before.
 
-*This section will be replaced by the measured profile.*
+**Why (likely):** more parameters give more room to represent "this fact applies only when..." while keeping the rules,
+the passages and the question in view; the 3B, summarising under the same load, drops the qualifier first. Larger
+instruction-tuned models also follow "say what isn't in the sources" more literally, which is why it flags gaps
+precisely (and why it tripped our phrase-based detector). See
+[why models behave this way](failure-log.md#why-models-behave-this-way).
+
+**Cost / speed** (measured; the estimates were 2-2.5 tokens/s and 1.5-2 min):
+
+| | 3B (final run) | 7B | 7B vs 3B |
+|---|---|---|---|
+| First words (median) | 10.8 s | 36.1 s | about 3.3x slower |
+| Full answer (median) | 34.8 s | 62.3 s | about 1.8x slower |
+| Writing | 4.5 tokens/s | 3.3 tokens/s | the 3B's final run had 5-8 GB in swap; it wrote 7.5 tokens/s in the baseline run |
+| Reading the prompt | 23-124 tokens/s (thousands when cached) | 12-26 tokens/s (69 once, partly cached) | |
+| RAM: Ollama + chatbot | 2.2 + 1.6 GB | 5.1-5.4 + 1.6 GB | needs the browsers closed (5.7 GB free with them open) |
+
+The first question took 131 s, including loading the model; the slowest answer after that took 110 s (MHP-03, the
+longest answer, 178 tokens).
+
+**Is it better, or is it noise?** One 7B run against four 3B runs. Between two 3B runs with the same settings,
+answers moved by 1-2 verdicts; the 7B is 5 correct answers above the best 3B run, and fixed the 3B's recurring errors
+(FIN-01 in four of four runs, PRG-02 again today) rather than different questions at random. That is larger than the
+noise we measured, but a second 7B run would make it solid.
+
+**Decision (proposed, by the rule set before the test):** it fixes the finance and list errors and invented nothing
+new, so it becomes an **optional quality mode**: `CHAT_MODEL=qwen2.5:7b ./chatbot/run.sh [--web]`, with browsers
+closed. The 3B stays the default: twice the wait and twice the memory are too much for everyday use on this laptop.
+Before offering it, fix failure 36 (otherwise the web page mislabels its best answers).
 
 ---
 

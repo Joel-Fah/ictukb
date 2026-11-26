@@ -52,6 +52,7 @@ Why each type happens is explained [after the table](#why-models-behave-this-way
 | 33 | Phase 3 | (evaluation) | With identical passages, **14 of 20 answers changed** between two runs | - | System (measurement) | Temperature 0.1 still samples; no fixed seed | `CHAT_SEED=42`; answers now match for most of their length but can still diverge late (prompt cache, multi-threaded arithmetic) | Mitigated |
 | 34 | Phase 3 | (evaluation) | During one run both models were in memory; swap reached 8 GB and the run slowed | - | System (our mistake) | Ollama keeps a model loaded 30 min after use (`keep_alive`), so the 1.5b stayed next to the 3B | Unloaded it (`keep_alive: 0`); lesson: unload models between experiments | Fixed |
 | 35 | Phase 3 | (evaluation) | First word "3x faster" with top-k 3 | - | System (measurement) | Mostly Ollama's prompt cache, not the setting (prompt only 15% shorter) | Report full-answer time and prompt read speed, not just time to first word | Documented |
+| 36 | 7B test | FIN-05 "What are the installment dates and amounts?" | A complete, cited answer followed by "I don't have that information ... Official contacts"; counted as refused | The answer was right: it ended with "the dates of the first and third installments are **not provided in** the sources" | Format/noise (our bug) | `is_refusal()` looks for refusal phrases anywhere in the answer, so an honest note about one missing detail marks the whole answer as a refusal; the web page would show *Not in the knowledge base* | Proposed: count it as a refusal only if the phrase is in the first sentence (or the answer cites nothing); otherwise a partial answer | Open |
 
 ## What the log shows
 
@@ -68,6 +69,9 @@ Why each type happens is explained [after the table](#why-models-behave-this-way
 - **What's left is subtle**: Phase 3's open entries (28-31) are facts from the passages applied to the wrong case,
   a superseded date, a dropped caveat. No string check catches those; they need a human, a stronger model, or
   content written one case per section.
+- **A stronger model did reduce them** (7B test): in its run, one dropped caveat (MHP-03) and none of the others.
+  It also showed that our checks were tuned to the 3B's habits: its precise "X is not provided in the sources"
+  tripped the refusal detector on a correct answer (36). Changing the model means re-checking the code around it.
 
 ---
 

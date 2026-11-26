@@ -1,0 +1,4 @@
+Loading the embedding model and qwen2.5:3b …
+[1/2] PRG-02 34s refused=False cited=['programs-masters']
+[2/2] ADM-02 26s refused=False cited=['admissions-bachelor-requirements']
+wrote /home/joelfah/Documents/GitHub/ictukb/chatbot/reports/generation-qwen3b-lists.md

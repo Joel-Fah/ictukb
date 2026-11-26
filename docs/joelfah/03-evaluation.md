@@ -94,8 +94,8 @@ Strong areas: timetables (3/3), ERP procedures (5/6), course-registration proced
 
 ## What we did not test
 
-- `qwen2.5:7b`: about 2.5 GB more RAM; with 5-8 GB already in swap, the result would mostly measure swapping. Worth
-  trying on a machine with more free memory.
+- ~~`qwen2.5:7b`~~: tested later (2026-11-26), after a reboot with the browsers closed: 13/15 correct, no invented
+  facts, 62 s per answer. Profile and decision in [models.md](models.md#qwen257b-reads-conditions-but-slow).
 - Passage length (`CHAT_MAX_CHUNK_CHARS`) and the threshold beyond Phase 1's sweep.
 - More than one run per configuration: each run takes 10-15 minutes and a full hand check; with more time, 3 runs
   per configuration would make the comparisons solid.
