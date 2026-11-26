@@ -25,7 +25,7 @@ Author: Joel-Fah. Work happens on the `local-chatbot` branch of our fork of
 | [05-packaging-and-web.md](05-packaging-and-web.md) | Phase 5: two-command setup, the local web page, how they were tested | done |
 | [issues/](issues/README.md) | Issues and pull requests we sent to the shared knowledge base | ongoing |
 | [reports/](reports/) | Raw transcripts and evaluation reports (Phases 1-2; Phase 3 reports are in `chatbot/reports/`) | |
-| [scripts/](scripts/) | Small measurement scripts (threshold sweep) | |
+| [scripts/](scripts/) | Small measurement scripts (threshold sweep, coverage gaps, French vs English retrieval) and the offline test (`offline_test.sh`) | |
 
 ## The idea in one picture
 

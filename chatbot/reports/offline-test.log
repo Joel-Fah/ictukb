@@ -1,0 +1,42 @@
+# Offline test, Thu 26 Nov 2026 06:08:36 AM WAT
+[06:08:39] Wi-Fi: disabled
+
+## 0. Proof that there is no network
+br-c4c2787ef9dd  UP             172.18.0.1/16 
+no default route
+https://github.com unreachable (expected)
+https://1.1.1.1 unreachable (expected)
+https://huggingface.co unreachable (expected)
+
+## 1. Knowledge-base search (ictkb search: e5 embeddings + PostgreSQL)
+confidence: high
+0.883  erp-course-registration  [How do I register courses on the ERP?]
+0.888  procedures-course-registration  [How do I register for courses each semester?]
+0.856  procedures-add-drop  [Can I add or drop a course after registering?]
+0.849  erp-course-registration  [What about late registration and dropping a course?]
+0.847  erp-course-registration  [What must I have paid before I can register?]
+exit 0, 3 s
+
+## 2. Chatbot: two golden questions with qwen2.5:3b (one answerable, one off-topic)
+Loading the embedding model and qwen2.5:3b …
+[1/2] PRC-02 44s refused=False cited=['announcements-current-files', 'procedures-course-registration']
+[2/2] NEG-01 0s refused=True cited=[]
+wrote /home/joelfah/Documents/GitHub/ictukb/chatbot/reports/generation-offline.md
+exit 0, 54 s
+
+## 3. Web page: one question through POST /api/ask
+events: retrieval done (+56 text pieces)
+answer: To reset your ERP password, follow these steps:
+
+1. Go to the login page.
+2. Click on "Forgot password?".
+3. Enter your email or matricule.
+4. The system will send you an email with a secure link to choose a new password.
+5. Follow the instructions in the email to set your new password.
+
+[erp-password-reset]
+status: grounded | sources: ['erp-password-reset'] | total: 25.2 s
+25 s
+
+[06:10:04] all steps done; switching Wi-Fi back on
+[06:10:11] Wi-Fi back on: enabled, 1 default route(s)

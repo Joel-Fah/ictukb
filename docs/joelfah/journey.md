@@ -38,7 +38,7 @@ These constraints shaped every choice below.
    come from the model reading the passages, which a 3B model mostly, but not always, does.
 3. **A small model hallucinates in specific, predictable places**: contact details when it redirects the
    student, dates when its decoding settings are off, names and abbreviations when it translates or explains,
-   and gaps it fills when a section is empty. See the [failure log](failure-log.md): 36 entries, 10 of them invented
+   and gaps it fills when a section is empty. See the [failure log](failure-log.md): 37 entries, 10 of them invented
    facts (5 from the 1.5b model alone in one run).
 4. **Speed on a CPU.** Reading a 650-850-token prompt takes most of the time: first words after about 17 s, a full
    answer in about 34 s. Memory pressure (swap) makes it worse and variable.

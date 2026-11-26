@@ -243,6 +243,29 @@ Every connection went to `127.0.0.1:5432` (our database) or to the local name-se
 loads from the local cache and nothing calls a cloud service. To confirm by hand: switch off Wi-Fi and run the same
 `ictkb search`; it should answer the same way.
 
+### The Wi-Fi-off test (done 2026-11-26, after Phase 5)
+
+The session's need for the network was solved by doing everything in **one command**: switch Wi-Fi off, run the
+tests, switch it back on (always, even if a step fails). Script: [scripts/offline_test.sh](scripts/offline_test.sh);
+output: [offline-test.log](../../chatbot/reports/offline-test.log).
+
+| Step | Result with Wi-Fi off (no default route; github.com, 1.1.1.1, huggingface.co unreachable) |
+|---|---|
+| `ictkb search "How do I register for courses?"` | correct documents on top, 3 s |
+| Chatbot (`qwen2.5:3b`), PRC-02 and NEG-01 | "Monday 23 November 2026", cited (44 s); the off-topic question refused below the threshold ([report](../../chatbot/reports/generation-offline.md)) |
+| Web page, `POST /api/ask` "How do I reset my ERP password?" | streamed steps, status *grounded*, cited `erp-password-reset`, 25 s |
+
+**The whole assistant works without internet.** The e5 model loads from `~/.cache/fastembed` without contacting
+Hugging Face, and Ollama, the database and the page are all local.
+
+**What went wrong first (failure 37).** The first attempt used `nmcli networking off` (the plan from Phase 0). That
+switches off *every* NetworkManager device, and NetworkManager counts Docker's bridge network (`br-...`, "connected
+(externally)") among them. The database became unreachable during the test, and stayed unreachable afterwards: the
+bridge came back up **without its address** (172.18.0.1). Restarting the container didn't help (Docker sets that
+address only when it creates the network); `docker compose down` + `up -d db` recreated the network, and the data,
+which lives in the `docker_dbdata` volume, was intact (733 chunks, 110 documents). **Lesson: to simulate "no
+internet", switch off the Wi-Fi radio (`nmcli radio wifi off`), not all networking.**
+
 ---
 
 ## Resource summary
